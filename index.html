@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Justice Amplified</title>
+<meta name="description" content="AI-powered legal intelligence with human oversight. Start with affordable AI legal tools and add independent licensed-attorney help when you need it.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;600;700;800&family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg0: #02050B;
+    --bg1: #061329;
+    --bg2: #081C38;
+    --ink: #F2F6FF;
+    --muted: #93A6C7;
+    --dim: #5F7398;
+    --blue: #087CFF;
+    --cyan: #00A8FF;
+    --gold: #C9A45C;
+    --line: rgba(130, 170, 255, 0.14);
+    --line-strong: rgba(130, 170, 255, 0.28);
+    --glow: rgba(8, 124, 255, 0.22);
+    --display: 'Big Shoulders Display', 'Arial Narrow', 'Helvetica Neue', sans-serif;
+    --body: 'Public Sans', -apple-system, 'Segoe UI', sans-serif;
+    --mono: 'IBM Plex Mono', 'SF Mono', Menlo, monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg0);
+    color: var(--ink);
+    font-family: var(--body);
+    font-weight: 300;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  html, body { overflow-x: clip; }
+  [id] { scroll-margin-top: 88px; }
+  a { color: inherit; text-decoration: none; }
+  img { max-width: 100%; }
+  ::selection { background: var(--blue); color: #fff; }
+
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+  @media (min-width: 768px) { .wrap { padding: 0 48px; } }
+
+  /* ---------- Type roles ---------- */
+  .display {
+    font-family: var(--display);
+    font-weight: 800;
+    text-transform: uppercase;
+    line-height: 0.92;
+    letter-spacing: 0.005em;
+    text-wrap: balance;
+  }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--cyan);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 22px;
+  }
+  .eyebrow::before { content: ""; width: 28px; height: 1px; background: var(--blue); flex: none; }
+  .lede { font-size: 19px; line-height: 1.65; color: var(--muted); max-width: 62ch; }
+  .lede strong, .lede b { color: var(--ink); font-weight: 600; }
+
+  .section { padding: 110px 0; position: relative; }
+  @media (max-width: 767px) { .section { padding: 76px 0; } }
+  .section-title { font-size: clamp(42px, 6.5vw, 84px); }
+  .section-title .hl { color: var(--blue); }
+  .panel { background: var(--bg1); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+
+  /* ---------- Buttons ---------- */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    font-family: var(--mono); font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase;
+    padding: 17px 30px; border: 1px solid transparent; border-radius: 4px;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+    cursor: pointer; white-space: nowrap;
+  }
+  .btn-primary {
+    background: linear-gradient(100deg, var(--blue), var(--cyan));
+    color: #fff; box-shadow: 0 0 0 1px rgba(0,168,255,0.35), 0 14px 40px -10px var(--glow);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 0 1px rgba(0,168,255,0.6), 0 20px 48px -8px rgba(8,124,255,0.45); }
+  .btn-ghost { border-color: var(--line-strong); color: var(--ink); background: rgba(8,28,56,0.35); }
+  .btn-ghost:hover { border-color: var(--cyan); color: var(--cyan); }
+  .btn-text { padding: 17px 6px; color: var(--muted); }
+  .btn-text:hover { color: var(--cyan); }
+  .arrow { display: inline-block; transition: transform 0.18s ease; }
+  .btn:hover .arrow { transform: translateX(4px); }
+
+  /* ---------- Reveal on scroll ---------- */
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; transition: none; }
+    html { scroll-behavior: auto; }
+    * { animation: none !important; transition: none !important; }
+  }
+
+  /* ---------- Nav ---------- */
+  .nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(2,5,11,0.78);
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-inner { height: 70px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+  .logo { display: flex; align-items: center; gap: 12px; flex: none; }
+  .logo-mark { width: 30px; height: 30px; flex: none; }
+  .logo-word { font-family: var(--display); font-weight: 700; font-size: 21px; letter-spacing: 0.06em; text-transform: uppercase; }
+  .logo-word span { color: var(--cyan); }
+  .nav-links { display: none; align-items: center; gap: 30px; }
+  .nav-links a { font-size: 13.5px; font-weight: 400; color: var(--muted); transition: color 0.15s ease; white-space: nowrap; }
+  .nav-links a:hover { color: var(--ink); }
+  .nav-links a.active { color: var(--cyan); }
+  .nav-actions { display: none; align-items: center; gap: 10px; }
+  .nav-actions .btn { padding: 11px 20px; font-size: 11.5px; }
+  .nav-burger {
+    display: flex; flex-direction: column; gap: 5px; background: none; border: 0; padding: 8px; cursor: pointer;
+  }
+  .nav-burger span { width: 22px; height: 2px; background: var(--ink); transition: transform 0.2s ease, opacity 0.2s ease; }
+  .nav-burger[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .nav-burger[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+  .nav-burger[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+  .mobile-menu {
+    display: none; border-bottom: 1px solid var(--line); background: rgba(2,5,11,0.97);
+    position: absolute; left: 0; right: 0; top: 70px; padding: 18px 24px 28px;
+  }
+  .mobile-menu.open { display: block; }
+  .mobile-menu a { display: block; padding: 13px 0; font-size: 16px; color: var(--muted); border-bottom: 1px solid var(--line); }
+  .mobile-menu a:last-of-type { border-bottom: 0; }
+  .mobile-menu .btn { width: 100%; margin-top: 14px; }
+  @media (min-width: 1024px) {
+    .nav-links, .nav-actions { display: flex; }
+    .nav-burger, .mobile-menu { display: none !important; }
+  }
+
+  /* ---------- Hero ---------- */
+  .hero { position: relative; padding: 120px 0 90px; overflow: hidden; }
+  @media (max-width: 767px) { .hero { padding: 72px 0 64px; } }
+  .hero-beam {
+    position: absolute; inset: 0; pointer-events: none;
+    background:
+      radial-gradient(ellipse 900px 520px at 78% -10%, rgba(8,124,255,0.28), transparent 65%),
+      radial-gradient(ellipse 700px 500px at 12% 110%, rgba(0,168,255,0.10), transparent 60%);
+  }
+  .hero-grid {
+    position: absolute; inset: 0; pointer-events: none; opacity: 0.5;
+    background-image:
+      linear-gradient(rgba(130,170,255,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(130,170,255,0.05) 1px, transparent 1px);
+    background-size: 72px 72px;
+    mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, #000 30%, transparent 100%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, #000 30%, transparent 100%);
+  }
+  .hero-inner { position: relative; display: grid; gap: 56px; }
+  @media (min-width: 1024px) { .hero-inner { grid-template-columns: 7fr 5fr; align-items: center; } }
+  .hero h1 { font-size: clamp(76px, 13vw, 176px); }
+  .hero h1 .amp { display: block; color: transparent; background: linear-gradient(95deg, var(--blue) 10%, var(--cyan) 70%); -webkit-background-clip: text; background-clip: text; }
+  .hero-sub { margin-top: 30px; font-size: clamp(18px, 2.2vw, 22px); line-height: 1.55; color: var(--muted); max-width: 46ch; font-weight: 300; }
+  .hero-sub strong { color: var(--ink); font-weight: 600; }
+  .hero-kicker { margin-top: 16px; font-family: var(--mono); font-size: 13px; letter-spacing: 0.06em; color: var(--dim); }
+  .hero-ctas { margin-top: 42px; display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 10px; margin-bottom: 30px;
+    font-family: var(--mono); font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--cyan);
+    border: 1px solid var(--line-strong); border-radius: 100px; padding: 9px 18px; background: rgba(8,28,56,0.4);
+  }
+  .pulse { width: 7px; height: 7px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 0 0 rgba(0,168,255,0.7); animation: pulse 2.4s infinite; }
+  @keyframes pulse { 70% { box-shadow: 0 0 0 9px rgba(0,168,255,0); } 100% { box-shadow: 0 0 0 0 rgba(0,168,255,0); } }
+
+  .hero-visual { position: relative; }
+  .hero-visual svg { width: 100%; height: auto; display: block; filter: drop-shadow(0 20px 60px rgba(8,124,255,0.25)); }
+  .dash { stroke-dasharray: 6 7; animation: dashmove 3.2s linear infinite; }
+  @keyframes dashmove { to { stroke-dashoffset: -52; } }
+
+  /* ---------- Stat band ---------- */
+  .stat-band { border-top: 1px solid var(--line); background: var(--bg1); }
+  .stat-band-inner { display: grid; grid-template-columns: 1fr; }
+  @media (min-width: 768px) { .stat-band-inner { grid-template-columns: repeat(3, 1fr); } }
+  .stat-cell { padding: 34px 8px; border-bottom: 1px solid var(--line); }
+  @media (min-width: 768px) { .stat-cell { border-bottom: 0; border-right: 1px solid var(--line); padding: 40px 40px; } .stat-cell:last-child { border-right: 0; } }
+  .stat-num { font-family: var(--display); font-weight: 700; font-size: 44px; line-height: 1; color: var(--cyan); font-variant-numeric: tabular-nums; }
+  .stat-lab { margin-top: 8px; font-size: 14px; color: var(--muted); max-width: 30ch; }
+
+  /* ---------- Problem ---------- */
+  .big-money { font-family: var(--display); font-weight: 800; font-size: clamp(88px, 16vw, 220px); line-height: 0.9; color: transparent; -webkit-text-stroke: 1.5px rgba(0,168,255,0.65); letter-spacing: 0.01em; margin: 44px 0 18px; font-variant-numeric: tabular-nums; }
+  .money-ladder { display: flex; flex-wrap: wrap; gap: 12px 30px; margin-top: 30px; font-family: var(--mono); font-size: 14px; color: var(--dim); font-variant-numeric: tabular-nums; }
+  .money-ladder span { text-decoration: line-through; text-decoration-color: rgba(0,168,255,0.5); }
+  .problem-q { margin-top: 44px; font-size: clamp(22px, 3vw, 30px); font-weight: 400; line-height: 1.4; color: var(--ink); max-width: 34ch; text-wrap: balance; }
+  .problem-a { margin-top: 20px; font-family: var(--mono); font-size: 14px; letter-spacing: 0.04em; color: var(--cyan); }
+
+  /* ---------- Access ladder ---------- */
+  .ladder { margin-top: 64px; display: grid; gap: 18px; }
+  @media (min-width: 900px) { .ladder { grid-template-columns: repeat(4, 1fr); align-items: end; } }
+  .rung {
+    border: 1px solid var(--line); border-radius: 8px; padding: 30px 26px 28px;
+    background: linear-gradient(180deg, rgba(8,28,56,0.55), rgba(6,19,41,0.85));
+    position: relative; overflow: hidden;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+  }
+  .rung:hover { border-color: var(--line-strong); transform: translateY(-4px); }
+  .rung::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--blue), var(--cyan)); opacity: 0.55; }
+  @media (min-width: 900px) {
+    .rung:nth-child(1) { min-height: 330px; }
+    .rung:nth-child(2) { min-height: 380px; }
+    .rung:nth-child(3) { min-height: 430px; }
+    .rung:nth-child(4) { min-height: 480px; }
+  }
+  .rung.premium::before { background: linear-gradient(90deg, var(--gold), #E8CD93); }
+  .rung-level { font-family: var(--mono); font-size: 11px; letter-spacing: 0.22em; color: var(--dim); }
+  .rung h3 { font-family: var(--display); font-weight: 700; text-transform: uppercase; font-size: 27px; letter-spacing: 0.02em; margin-top: 10px; line-height: 1; }
+  .rung-price { margin-top: 6px; font-family: var(--mono); font-size: 13px; color: var(--cyan); }
+  .rung.premium .rung-price { color: var(--gold); }
+  .rung ul { margin-top: 18px; list-style: none; display: grid; gap: 8px; }
+  .rung li { font-size: 13.5px; color: var(--muted); padding-left: 16px; position: relative; line-height: 1.45; }
+  .rung li::before { content: ""; position: absolute; left: 0; top: 8px; width: 6px; height: 1.5px; background: var(--blue); }
+  .rung.premium li::before { background: var(--gold); }
+  .rung-note { margin-top: 16px; font-size: 12px; color: var(--dim); line-height: 1.5; }
+
+  /* ---------- Versus ---------- */
+  .versus { margin-top: 64px; display: grid; gap: 20px; }
+  @media (min-width: 900px) { .versus { grid-template-columns: 1fr 1fr; } }
+  .vs-col { border: 1px solid var(--line); border-radius: 10px; padding: 38px 34px; background: var(--bg1); }
+  .vs-col.amped { border-color: rgba(0,168,255,0.4); background: linear-gradient(180deg, rgba(8,124,255,0.10), rgba(6,19,41,0.9)); box-shadow: 0 0 60px -20px var(--glow); }
+  .vs-head { font-family: var(--display); font-weight: 700; text-transform: uppercase; font-size: 24px; letter-spacing: 0.04em; }
+  .vs-col.amped .vs-head { color: var(--cyan); }
+  .vs-chain { margin-top: 26px; display: grid; }
+  .vs-node { border: 1px solid var(--line); border-radius: 6px; padding: 13px 18px; font-size: 14.5px; color: var(--muted); background: rgba(2,5,11,0.5); }
+  .vs-col.amped .vs-node { color: var(--ink); border-color: rgba(0,168,255,0.25); }
+  .vs-link { width: 1px; height: 22px; margin: 0 auto; background: linear-gradient(180deg, var(--line-strong), transparent); }
+  .vs-col.amped .vs-link { background: linear-gradient(180deg, var(--cyan), transparent); }
+  .vs-verdict { margin-top: 24px; font-family: var(--mono); font-size: 12.5px; letter-spacing: 0.08em; text-transform: uppercase; }
+  .vs-col .vs-verdict { color: var(--dim); }
+  .vs-col.amped .vs-verdict { color: var(--cyan); }
+  .vs-footnote { margin-top: 26px; font-size: 14px; color: var(--muted); }
+
+  /* ---------- How it works ---------- */
+  .flow { margin-top: 70px; position: relative; display: grid; gap: 0; }
+  .flow::before {
+    content: ""; position: absolute; left: 27px; top: 30px; bottom: 30px; width: 1px;
+    background: linear-gradient(180deg, var(--blue), var(--cyan) 60%, transparent);
+  }
+  @media (min-width: 900px) { .flow::before { left: 43px; } }
+  .flow-step { position: relative; display: grid; grid-template-columns: 56px 1fr; gap: 22px; padding: 26px 0; }
+  @media (min-width: 900px) { .flow-step { grid-template-columns: 88px 1fr; gap: 34px; padding: 32px 0; } }
+  .flow-num {
+    width: 56px; height: 56px; border-radius: 50%; flex: none;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--display); font-weight: 700; font-size: 20px;
+    border: 1px solid var(--line-strong); background: var(--bg0); color: var(--cyan);
+    position: relative; z-index: 1;
+  }
+  @media (min-width: 900px) { .flow-num { width: 88px; height: 88px; font-size: 30px; } }
+  .flow-body h3 { font-family: var(--display); font-weight: 700; text-transform: uppercase; font-size: clamp(24px, 3vw, 34px); letter-spacing: 0.03em; }
+  .flow-body p { margin-top: 10px; color: var(--muted); max-width: 60ch; font-size: 15.5px; }
+  .flow-chips { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.05em; color: var(--muted); border: 1px solid var(--line); border-radius: 100px; padding: 6px 13px; background: rgba(8,28,56,0.4); }
+
+  /* ---------- Feature cards ---------- */
+  .cards { margin-top: 60px; display: grid; gap: 16px; grid-template-columns: 1fr; }
+  @media (min-width: 700px) { .cards { grid-template-columns: 1fr 1fr; } }
+  @media (min-width: 1100px) { .cards { grid-template-columns: repeat(4, 1fr); } }
+  .card {
+    border: 1px solid var(--line); border-radius: 10px; padding: 30px 26px; background: var(--bg1);
+    transition: border-color 0.2s ease, transform 0.2s ease, background 0.2s ease;
+    position: relative; overflow: hidden;
+  }
+  .card:hover { border-color: rgba(0,168,255,0.45); transform: translateY(-4px); background: var(--bg2); }
+  .card-ic { width: 40px; height: 40px; margin-bottom: 20px; color: var(--cyan); }
+  .card h3 { font-family: var(--display); font-weight: 700; text-transform: uppercase; font-size: 21px; letter-spacing: 0.04em; line-height: 1.05; }
+  .card p { margin-top: 10px; font-size: 14px; color: var(--muted); line-height: 1.55; }
+
+  /* ---------- Human in the loop ---------- */
+  .loop-stack { margin-top: 60px; max-width: 720px; margin-left: auto; margin-right: auto; display: grid; }
+  .loop-tier {
+    border: 1px solid var(--line); border-radius: 8px; padding: 24px 28px; text-align: center;
+    background: var(--bg1); font-family: var(--mono); font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase;
+  }
+  .loop-tier small { display: block; margin-top: 6px; font-family: var(--body); font-size: 13px; letter-spacing: 0; text-transform: none; color: var(--muted); }
+  .loop-tier.t1 { border-color: rgba(0,168,255,0.5); color: var(--cyan); }
+  .loop-tier.t4 { border-color: rgba(201,164,92,0.5); color: var(--gold); }
+  .loop-arrow { text-align: center; color: var(--dim); font-size: 18px; padding: 8px 0; }
+
+  /* ---------- Origin ---------- */
+  .origin { display: grid; gap: 48px; margin-top: 56px; }
+  @media (min-width: 1000px) { .origin { grid-template-columns: 5fr 7fr; align-items: start; } }
+  .portrait {
+    aspect-ratio: 4 / 5; border-radius: 10px; border: 1px solid var(--line-strong);
+    background:
+      radial-gradient(ellipse at 30% 20%, rgba(8,124,255,0.30), transparent 60%),
+      linear-gradient(180deg, var(--bg2), var(--bg1));
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
+    position: relative; overflow: hidden;
+  }
+  .portrait::after { content: ""; position: absolute; inset: 14px; border: 1px solid var(--line); border-radius: 6px; pointer-events: none; }
+  .portrait-initials { font-family: var(--display); font-weight: 800; font-size: 110px; line-height: 1; color: rgba(0,168,255,0.35); }
+  .portrait-cap { font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--dim); }
+  .origin-copy p { color: var(--muted); font-size: 16.5px; margin-bottom: 20px; max-width: 62ch; }
+  .origin-copy p strong { color: var(--ink); font-weight: 600; }
+  .origin-hours { display: flex; align-items: baseline; gap: 16px; margin: 30px 0; }
+  .origin-hours .n { font-family: var(--display); font-weight: 800; font-size: clamp(64px, 8vw, 110px); line-height: 0.9; color: var(--cyan); font-variant-numeric: tabular-nums; }
+  .origin-hours .l { font-family: var(--mono); font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dim); max-width: 20ch; line-height: 1.5; }
+  .origin-q { font-family: var(--display); font-weight: 700; text-transform: uppercase; font-size: clamp(26px, 3.4vw, 40px); line-height: 1.02; margin: 30px 0; color: var(--ink); }
+  .origin-q span { color: var(--blue); }
+  .verify-note {
+    margin-top: 28px; border: 1px dashed var(--line-strong); border-radius: 8px; padding: 18px 22px;
+    font-size: 13px; color: var(--dim); line-height: 1.6;
+  }
+  .verify-note b { color: var(--muted); font-weight: 600; }
+
+  /* ---------- Chaos to counsel ---------- */
+  .chaos { margin-top: 60px; display: grid; gap: 14px; }
+  @media (min-width: 1000px) { .chaos { grid-template-columns: 1fr auto 1fr auto 1fr; align-items: stretch; } }
+  .chaos-col { border: 1px solid var(--line); border-radius: 10px; padding: 30px 28px; background: var(--bg1); }
+  .chaos-col.mid { border-color: rgba(0,168,255,0.45); background: linear-gradient(180deg, rgba(8,124,255,0.12), var(--bg1)); display: flex; flex-direction: column; justify-content: center; text-align: center; }
+  .chaos-col h3 { font-family: var(--display); font-weight: 700; text-transform: uppercase; font-size: 22px; letter-spacing: 0.05em; margin-bottom: 16px; }
+  .chaos-col.mid h3 { color: var(--cyan); margin-bottom: 0; }
+  .chaos-col ul { list-style: none; display: grid; gap: 9px; }
+  .chaos-col li { font-size: 14px; color: var(--muted); padding-left: 16px; position: relative; }
+  .chaos-col.messy li::before { content: "×"; position: absolute; left: 0; color: var(--dim); }
+  .chaos-col.ready li::before { content: ""; position: absolute; left: 0; top: 8px; width: 7px; height: 7px; border-radius: 1px; background: var(--cyan); opacity: 0.8; }
+  .chaos-flow { display: flex; align-items: center; justify-content: center; color: var(--cyan); font-size: 22px; padding: 4px; }
+  @media (max-width: 999px) { .chaos-flow { transform: rotate(90deg); } }
+  .attorney-gain { margin-top: 34px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .attorney-gain .lab { font-family: var(--mono); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim); margin-right: 8px; }
+  .gain-chip { font-family: var(--mono); font-size: 12.5px; color: var(--ink); border: 1px solid rgba(0,168,255,0.4); border-radius: 100px; padding: 8px 18px; background: rgba(8,124,255,0.1); }
+
+  /* ---------- Split products ---------- */
+  .split { margin-top: 60px; display: grid; gap: 20px; }
+  @media (min-width: 1000px) { .split { grid-template-columns: 1fr 1fr; } }
+  .split-card { border: 1px solid var(--line); border-radius: 12px; padding: 44px 38px; background: var(--bg1); position: relative; overflow: hidden; }
+  .split-card .corner { position: absolute; top: -60px; right: -60px; width: 220px; height: 220px; border-radius: 50%; background: radial-gradient(circle, var(--glow), transparent 70%); pointer-events: none; }
+  .split-card .eyebrow { margin-bottom: 16px; }
+  .split-card h3 { font-family: var(--display); font-weight: 700; text-transform: uppercase; font-size: clamp(30px, 3.6vw, 44px); line-height: 0.95; }
+  .split-card p.sub { margin-top: 14px; color: var(--muted); font-size: 15.5px; max-width: 52ch; }
+  .tag-grid { margin-top: 26px; display: flex; flex-wrap: wrap; gap: 8px; }
+  .split-card .btn { margin-top: 32px; }
+
+  /* ---------- Network ---------- */
+  .net-filters { margin-top: 44px; display: flex; flex-wrap: wrap; gap: 8px; }
+  .net-levels { margin-top: 34px; display: grid; gap: 12px; grid-template-columns: 1fr; }
+  @media (min-width: 800px) { .net-levels { grid-template-columns: repeat(4, 1fr); } }
+  .net-level { border: 1px solid var(--line); border-radius: 8px; padding: 22px 20px; background: var(--bg0); }
+  .net-level h4 { font-family: var(--display); font-weight: 700; text-transform: uppercase; font-size: 19px; letter-spacing: 0.04em; color: var(--ink); }
+  .net-level p { margin-top: 6px; font-size: 13px; color: var(--dim); }
+
+  /* ---------- Pricing ---------- */
+  .price-grid { margin-top: 60px; display: grid; gap: 16px; }
+  @media (min-width: 1000px) { .price-grid { grid-template-columns: repeat(4, 1fr); } }
+  .price-card { border: 1px solid var(--line); border-radius: 12px; padding: 34px 28px; background: var(--bg1); display: flex; flex-direction: column; transition: border-color 0.2s ease, transform 0.2s ease; }
+  .price-card:hover { transform: translateY(-4px); }
+  .price-card.hot { border-color: rgba(0,168,255,0.55); background: linear-gradient(180deg, rgba(8,124,255,0.12), var(--bg1)); box-shadow: 0 0 70px -25px var(--glow); }
+  .price-card.gold { border-color: rgba(201,164,92,0.4); }
+  .price-tier { font-family: var(--mono); font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--dim); }
+  .price-card h3 { font-family: var(--display); font-weight: 700; text-transform: uppercase; font-size: 30px; letter-spacing: 0.03em; margin-top: 10px; }
+  .price-amount { margin-top: 16px; font-family: var(--display); font-weight: 700; font-size: 34px; color: var(--cyan); line-height: 1; font-variant-numeric: tabular-nums; }
+  .price-card.gold .price-amount { color: var(--gold); }
+  .price-amount small { display: block; margin-top: 6px; font-family: var(--mono); font-size: 11px; font-weight: 400; letter-spacing: 0.1em; color: var(--dim); }
+  .price-card p.desc { margin-top: 16px; font-size: 14px; color: var(--muted); flex: 1; line-height: 1.55; }
+  .price-card .btn { margin-top: 24px; width: 100%; padding: 14px 10px; font-size: 12px; }
+  .price-fine { margin-top: 26px; font-family: var(--mono); font-size: 12px; color: var(--dim); line-height: 1.7; max-width: 90ch; }
+
+  /* ---------- Trust ---------- */
+  .trust-grid { margin-top: 60px; display: grid; gap: 14px; }
+  @media (min-width: 800px) { .trust-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1100px) { .trust-grid { grid-template-columns: repeat(5, 1fr); } }
+  .trust-cell { border: 1px solid var(--line); border-radius: 8px; padding: 26px 22px; background: rgba(2,5,11,0.6); }
+  .trust-cell h4 { font-family: var(--display); font-weight: 700; text-transform: uppercase; font-size: 18px; letter-spacing: 0.05em; color: var(--cyan); line-height: 1.1; }
+  .trust-cell p { margin-top: 10px; font-size: 13px; color: var(--muted); line-height: 1.55; }
+
+  /* ---------- Final CTA ---------- */
+  .final { position: relative; padding: 150px 0 140px; text-align: center; overflow: hidden; }
+  @media (max-width: 767px) { .final { padding: 100px 0; } }
+  .final-beam { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse 800px 480px at 50% 115%, rgba(8,124,255,0.35), transparent 65%); }
+  .final h2 { font-size: clamp(40px, 6.8vw, 92px); position: relative; }
+  .final h2 .hl { color: var(--cyan); }
+  .final p { position: relative; margin: 28px auto 0; max-width: 56ch; color: var(--muted); font-size: 17px; }
+  .final .hero-ctas { justify-content: center; position: relative; }
+
+  /* ---------- Legal disclosures ---------- */
+  .legal-list { margin-top: 48px; display: grid; gap: 10px; max-width: 860px; }
+  .legal-item { border: 1px solid var(--line); border-radius: 8px; background: var(--bg1); }
+  .legal-item[open] { border-color: var(--line-strong); }
+  .legal-item summary {
+    list-style: none; cursor: pointer; padding: 18px 22px;
+    font-family: var(--mono); font-size: 12.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted);
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  }
+  .legal-item summary::-webkit-details-marker { display: none; }
+  .legal-item summary::after { content: "+"; color: var(--cyan); font-size: 16px; flex: none; }
+  .legal-item[open] summary { color: var(--cyan); }
+  .legal-item[open] summary::after { content: "\2013"; }
+  .legal-item .legal-body { padding: 0 22px 20px; font-size: 13.5px; color: var(--dim); line-height: 1.7; max-width: 75ch; }
+  .legal-item .legal-body b { color: var(--muted); font-weight: 600; }
+
+  /* ---------- Footer ---------- */
+  footer { border-top: 1px solid var(--line); background: var(--bg0); padding: 70px 0 40px; }
+  .foot-top { display: grid; gap: 40px; }
+  @media (min-width: 900px) { .foot-top { grid-template-columns: 2fr 1fr 1fr 1fr 1fr; } }
+  .foot-brand p { margin-top: 14px; font-size: 14px; color: var(--dim); max-width: 30ch; }
+  .foot-col h5 { font-family: var(--mono); font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--dim); margin-bottom: 16px; }
+  .foot-col a { display: block; font-size: 14px; color: var(--muted); padding: 5px 0; }
+  .foot-col a:hover { color: var(--cyan); }
+  .foot-disclaimer {
+    margin-top: 56px; border: 1px solid var(--line); border-radius: 8px; padding: 22px 26px;
+    font-size: 12.5px; color: var(--dim); line-height: 1.75;
+  }
+  .foot-base { margin-top: 30px; display: flex; flex-wrap: wrap; gap: 12px 28px; justify-content: space-between; align-items: center; font-family: var(--mono); font-size: 12px; color: var(--dim); }
+  .foot-base .links { display: flex; flex-wrap: wrap; gap: 18px; }
+  .foot-base a:hover { color: var(--cyan); }
+</style>
+</head>
+<body>
+
+<!-- ================= NAV ================= -->
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="logo" href="#top" aria-label="Justice Amplified home">
+      <svg class="logo-mark" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <path d="M16 3v22" stroke="#087CFF" stroke-width="2"/>
+        <path d="M6 8h20" stroke="#087CFF" stroke-width="2"/>
+        <path d="M6 8l-3.5 8a4.5 4.5 0 0 0 9 0L8 8" stroke="#00A8FF" stroke-width="1.6" fill="none"/>
+        <path d="M26 8l-3.5 8a4.5 4.5 0 0 0 9 0L28 8" stroke="#00A8FF" stroke-width="1.6" fill="none"/>
+        <path d="M11 28h10" stroke="#C9A45C" stroke-width="2"/>
+      </svg>
+      <span class="logo-word">Justice<span>Amplified</span></span>
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#how">How It Works</a>
+      <a href="#individuals">Individuals</a>
+      <a href="#businesses">Businesses</a>
+      <a href="#attorneys">Attorneys</a>
+      <a href="#story">ALG Story</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#trust">Resources</a>
+    </nav>
+    <div class="nav-actions">
+      <a class="btn btn-ghost" href="#pricing">Sign In</a>
+      <a class="btn btn-primary" href="#pricing">Start Your Case</a>
+    </div>
+    <button class="nav-burger" aria-expanded="false" aria-controls="mobileMenu" aria-label="Open menu" onclick="toggleMenu(this)">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#how">How It Works</a>
+    <a href="#individuals">Individuals</a>
+    <a href="#businesses">Businesses</a>
+    <a href="#attorneys">Attorneys</a>
+    <a href="#story">ALG Story</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#trust">Resources</a>
+    <a class="btn btn-primary" href="#pricing">Start Your Case</a>
+  </div>
+</header>
+
+<!-- ================= HERO ================= -->
+<section class="hero" id="top">
+  <div class="hero-beam"></div>
+  <div class="hero-grid"></div>
+  <div class="wrap hero-inner">
+    <div>
+      <div class="hero-tag"><span class="pulse"></span>AI-powered legal intelligence. Human oversight.</div>
+      <h1 class="display">Justice.<span class="amp">Amplified.</span></h1>
+      <p class="hero-sub">Powerful AI legal tools for people and businesses who need a better way to navigate the legal system. <strong>Start with AI. Add human expertise when you need it.</strong></p>
+      <p class="hero-kicker">Justice shouldn't depend on how much money you have.</p>
+      <div class="hero-ctas">
+        <a class="btn btn-primary" href="#pricing">Start Your Case <span class="arrow">&rarr;</span></a>
+        <a class="btn btn-ghost" href="#how">How It Works</a>
+        <a class="btn btn-text" href="#attorneys">For Attorneys <span class="arrow">&rarr;</span></a>
+      </div>
+    </div>
+    <div class="hero-visual" aria-hidden="true">
+      <svg viewBox="0 0 460 480" fill="none">
+        <!-- ambient network -->
+        <g stroke="rgba(0,168,255,0.25)" stroke-width="1">
+          <line class="dash" x1="230" y1="70" x2="80" y2="180"/>
+          <line class="dash" x1="230" y1="70" x2="380" y2="180"/>
+          <line class="dash" x1="80" y1="180" x2="150" y2="330"/>
+          <line class="dash" x1="380" y1="180" x2="310" y2="330"/>
+          <line class="dash" x1="150" y1="330" x2="310" y2="330"/>
+          <line class="dash" x1="230" y1="70" x2="230" y2="240"/>
+          <line class="dash" x1="150" y1="330" x2="230" y2="240"/>
+          <line class="dash" x1="310" y1="330" x2="230" y2="240"/>
+          <line class="dash" x1="150" y1="330" x2="230" y2="430"/>
+          <line class="dash" x1="310" y1="330" x2="230" y2="430"/>
+        </g>
+        <!-- scales at core -->
+        <g transform="translate(230,225)">
+          <circle r="58" fill="rgba(8,124,255,0.08)" stroke="rgba(0,168,255,0.5)" stroke-width="1.2"/>
+          <circle r="76" fill="none" stroke="rgba(0,168,255,0.18)" stroke-width="1"/>
+          <g stroke="#C9A45C" stroke-width="1.8" fill="none">
+            <path d="M0 -30 v52"/>
+            <path d="M-26 -18 h52"/>
+            <path d="M-26 -18 l-9 20 a11 11 0 0 0 22 0 l-9 -20"/>
+            <path d="M26 -18 l-9 20 a11 11 0 0 0 22 0 l-9 -20"/>
+            <path d="M-13 26 h26"/>
+          </g>
+        </g>
+        <!-- nodes -->
+        <g>
+          <circle cx="230" cy="70" r="7" fill="#087CFF"/>
+          <circle cx="80" cy="180" r="5.5" fill="#00A8FF"/>
+          <circle cx="380" cy="180" r="5.5" fill="#00A8FF"/>
+          <circle cx="150" cy="330" r="5.5" fill="#087CFF"/>
+          <circle cx="310" cy="330" r="5.5" fill="#087CFF"/>
+          <circle cx="230" cy="430" r="7" fill="#00A8FF"/>
+        </g>
+        <!-- node labels -->
+        <g font-family="'IBM Plex Mono', monospace" font-size="10" fill="#5F7398" letter-spacing="1.5">
+          <text x="230" y="48" text-anchor="middle">YOUR CASE</text>
+          <text x="80" y="163" text-anchor="middle">DOCUMENTS</text>
+          <text x="380" y="163" text-anchor="middle">TIMELINE</text>
+          <text x="150" y="358" text-anchor="middle">EVIDENCE</text>
+          <text x="310" y="358" text-anchor="middle">RESEARCH</text>
+          <text x="230" y="456" text-anchor="middle">ATTORNEY REVIEW</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ================= STAT BAND ================= -->
+<div class="stat-band">
+  <div class="wrap stat-band-inner">
+    <div class="stat-cell reveal">
+      <div class="stat-num">$250,000+</div>
+      <div class="stat-lab">What complex litigation can cost under the traditional model</div>
+    </div>
+    <div class="stat-cell reveal">
+      <div class="stat-num">1,200+ hrs</div>
+      <div class="stat-lab">Invested developing and refining the AI workflows behind ALG</div>
+    </div>
+    <div class="stat-cell reveal">
+      <div class="stat-num">4 levels</div>
+      <div class="stat-lab">Of help, from AI self-help to attorney representation where available</div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= PROBLEM ================= -->
+<section class="section" id="problem">
+  <div class="wrap">
+    <div class="eyebrow reveal">The Problem</div>
+    <h2 class="display section-title reveal">Legal help has become <span class="hl">too expensive.</span></h2>
+    <div class="big-money reveal">$250,000+</div>
+    <p class="lede reveal">Complex litigation can generate extraordinary legal expenses.</p>
+    <div class="money-ladder reveal">
+      <span>$25,000</span><span>$50,000</span><span>$100,000</span><b style="color:var(--cyan)">$250,000+</b>
+    </div>
+    <p class="problem-q reveal">What happens when someone has a legitimate case but cannot afford the traditional model?</p>
+    <p class="problem-a reveal">Justice Amplified was built around that problem.</p>
+  </div>
+</section>
+
+<!-- ================= ACCESS LADDER ================= -->
+<section class="section panel" id="individuals">
+  <div class="wrap">
+    <div class="eyebrow reveal">The Access Ladder</div>
+    <h2 class="display section-title reveal">Another path <span class="hl">exists.</span></h2>
+    <p class="lede reveal" style="margin-top:24px">Begin with affordable AI-powered tools. Escalate to increasingly sophisticated human assistance when necessary. <strong>AI creates leverage. Humans provide judgment. Justice becomes more accessible.</strong></p>
+
+    <div class="ladder">
+      <div class="rung reveal">
+        <div class="rung-level">Level 1</div>
+        <h3>AI Self-Help</h3>
+        <div class="rung-price">Free / low cost</div>
+        <ul>
+          <li>Understand legal terminology</li>
+          <li>Organize facts and documents</li>
+          <li>Build timelines</li>
+          <li>Summarize evidence</li>
+          <li>Identify questions to investigate</li>
+          <li>Generate working drafts</li>
+          <li>Attorney-ready case summaries</li>
+        </ul>
+        <p class="rung-note">Legal information and self-help tools, not individualized legal advice.</p>
+      </div>
+      <div class="rung reveal">
+        <div class="rung-level">Level 2</div>
+        <h3>Guided Support</h3>
+        <div class="rung-price">$300 to $500</div>
+        <ul>
+          <li>Case organization</li>
+          <li>Document preparation assistance</li>
+          <li>Litigation checklists</li>
+          <li>Evidence organization</li>
+          <li>AI workflow assistance</li>
+          <li>Attorney-ready case packets</li>
+        </ul>
+        <p class="rung-note">Offered only where legally permissible.</p>
+      </div>
+      <div class="rung reveal">
+        <div class="rung-level">Level 3</div>
+        <h3>Attorney Review</h3>
+        <div class="rung-price">$1,000 to $2,000+</div>
+        <ul>
+          <li>Document review</li>
+          <li>Strategy consultation</li>
+          <li>Legal advice</li>
+          <li>Filing review</li>
+          <li>Risk analysis</li>
+          <li>Limited-scope representation</li>
+        </ul>
+        <p class="rung-note">Independent licensed attorneys, subject to jurisdiction, conflicts checks, engagement agreements, availability, professional rules, and attorney approval.</p>
+      </div>
+      <div class="rung premium reveal">
+        <div class="rung-level">Level 4</div>
+        <h3>Premium Representation</h3>
+        <div class="rung-price">Custom pricing</div>
+        <ul>
+          <li>Business litigation</li>
+          <li>Contract disputes</li>
+          <li>Civil litigation</li>
+          <li>Negotiation</li>
+          <li>Strategic counsel</li>
+          <li>Limited or full representation where offered</li>
+        </ul>
+        <p class="rung-note">For matters requiring substantially greater attorney involvement.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ASYMMETRIC ADVANTAGE ================= -->
+<section class="section">
+  <div class="wrap">
+    <div class="eyebrow reveal">The Asymmetric Advantage</div>
+    <h2 class="display section-title reveal">The other side has lawyers.<br><span class="hl">Now you have technology.</span></h2>
+
+    <div class="versus">
+      <div class="vs-col reveal">
+        <div class="vs-head">Traditional Model</div>
+        <div class="vs-chain">
+          <div class="vs-node">Client</div><div class="vs-link"></div>
+          <div class="vs-node">Attorney</div><div class="vs-link"></div>
+          <div class="vs-node">Associates</div><div class="vs-link"></div>
+          <div class="vs-node">Paralegals</div><div class="vs-link"></div>
+          <div class="vs-node">Research</div><div class="vs-link"></div>
+          <div class="vs-node">Documents</div>
+        </div>
+        <div class="vs-verdict">High hourly cost at every layer</div>
+      </div>
+      <div class="vs-col amped reveal">
+        <div class="vs-head">Justice Amplified</div>
+        <div class="vs-chain">
+          <div class="vs-node">Client</div><div class="vs-link"></div>
+          <div class="vs-node">AI Legal Intelligence</div><div class="vs-link"></div>
+          <div class="vs-node">Structured Workflows</div><div class="vs-link"></div>
+          <div class="vs-node">Human Verification</div><div class="vs-link"></div>
+          <div class="vs-node">Attorney Review When Needed</div>
+        </div>
+        <div class="vs-verdict">Technology does the heavy lifting. Humans handle judgment.</div>
+      </div>
+    </div>
+    <p class="vs-footnote reveal">Justice Amplified is technology plus human professionals. The AI is not a lawyer and does not practice law.</p>
+  </div>
+</section>
+
+<!-- ================= HOW IT WORKS ================= -->
+<section class="section panel" id="how">
+  <div class="wrap">
+    <div class="eyebrow reveal">How It Works</div>
+    <h2 class="display section-title reveal">From chaos to clarity <span class="hl">in six steps.</span></h2>
+
+    <div class="flow">
+      <div class="flow-step reveal">
+        <div class="flow-num">01</div>
+        <div class="flow-body">
+          <h3>Tell us what happened</h3>
+          <p>Guided intake helps you organize the situation in plain language, at your own pace.</p>
+        </div>
+      </div>
+      <div class="flow-step reveal">
+        <div class="flow-num">02</div>
+        <div class="flow-body">
+          <h3>Upload your documents</h3>
+          <p>Contracts, correspondence, pleadings, evidence, timelines, and other relevant materials, straight from your phone or computer.</p>
+          <div class="flow-chips"><span class="chip">Camera</span><span class="chip">Photo library</span><span class="chip">Files</span><span class="chip">PDF</span></div>
+        </div>
+      </div>
+      <div class="flow-step reveal">
+        <div class="flow-num">03</div>
+        <div class="flow-body">
+          <h3>AI organizes the chaos</h3>
+          <p>The system helps structure everything into a coherent picture of your matter.</p>
+          <div class="flow-chips"><span class="chip">Parties</span><span class="chip">Events</span><span class="chip">Evidence</span><span class="chip">Claims</span><span class="chip">Deadlines</span><span class="chip">Documents</span><span class="chip">Questions</span><span class="chip">Potential issues</span></div>
+        </div>
+      </div>
+      <div class="flow-step reveal">
+        <div class="flow-num">04</div>
+        <div class="flow-body">
+          <h3>Build your case file</h3>
+          <p>Generate organized working materials from your verified matter information.</p>
+          <div class="flow-chips"><span class="chip">Chronologies</span><span class="chip">Evidence summaries</span><span class="chip">Issue lists</span><span class="chip">Research questions</span><span class="chip">Drafting assistance</span><span class="chip">Attorney-ready summaries</span></div>
+        </div>
+      </div>
+      <div class="flow-step reveal">
+        <div class="flow-num">05</div>
+        <div class="flow-body">
+          <h3>Verify</h3>
+          <p>Important facts, quotations, authorities, citations, and generated materials should be independently checked before you rely on them.</p>
+        </div>
+      </div>
+      <div class="flow-step reveal">
+        <div class="flow-num">06</div>
+        <div class="flow-body">
+          <h3>Escalate when necessary</h3>
+          <p>Request assistance from appropriately licensed attorneys where available, with your organized case file ready to hand off.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= AI WORKSPACE ================= -->
+<section class="section">
+  <div class="wrap">
+    <div class="eyebrow reveal">What AI Can Do</div>
+    <h2 class="display section-title reveal">Your AI-powered <span class="hl">legal workspace.</span></h2>
+
+    <div class="cards">
+      <div class="card reveal">
+        <svg class="card-ic" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="20" cy="20" r="12"/><path d="M20 8v-4M20 36v-4M8 20H4M36 20h-4"/><circle cx="20" cy="20" r="4" fill="currentColor" stroke="none"/></svg>
+        <h3>Case Intelligence</h3>
+        <p>Turn large amounts of information into structured case summaries.</p>
+      </div>
+      <div class="card reveal">
+        <svg class="card-ic" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 4h14l8 8v24H10z"/><path d="M24 4v8h8"/><path d="M15 20h12M15 26h12"/></svg>
+        <h3>Document Intelligence</h3>
+        <p>Analyze and organize documents so nothing important stays buried.</p>
+      </div>
+      <div class="card reveal">
+        <svg class="card-ic" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 20h32"/><circle cx="10" cy="20" r="3"/><circle cx="20" cy="20" r="3"/><circle cx="30" cy="20" r="3"/><path d="M10 17v-6M20 23v6M30 17v-6"/></svg>
+        <h3>Timeline Builder</h3>
+        <p>Transform events and evidence into chronological timelines.</p>
+      </div>
+      <div class="card reveal">
+        <svg class="card-ic" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="17" cy="17" r="10"/><path d="M24 24l10 10"/></svg>
+        <h3>Legal Research Assistance</h3>
+        <p>Identify relevant legal questions and research paths worth pursuing.</p>
+      </div>
+      <div class="card reveal">
+        <svg class="card-ic" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 32L28 12l4 4L12 36H8z"/><path d="M24 8l8 8"/></svg>
+        <h3>Drafting Assistance</h3>
+        <p>Working drafts and document preparation help, built from your matter.</p>
+      </div>
+      <div class="card reveal">
+        <svg class="card-ic" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="10" cy="10" r="4"/><circle cx="30" cy="14" r="4"/><circle cx="14" cy="30" r="4"/><circle cx="32" cy="30" r="4"/><path d="M13 13l14 0M12 26l16 3M13 13l0 13"/></svg>
+        <h3>Evidence Organization</h3>
+        <p>Connect facts, documents, communications, and events into one map.</p>
+      </div>
+      <div class="card reveal">
+        <svg class="card-ic" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 10h28v24H6z"/><path d="M6 16h28"/><path d="M12 22h10M12 27h16"/></svg>
+        <h3>Case Packet Builder</h3>
+        <p>Turn disorganized information into materials counsel can review efficiently.</p>
+      </div>
+      <div class="card reveal">
+        <svg class="card-ic" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 20h18"/><path d="M18 12l8 8-8 8"/><circle cx="32" cy="20" r="5"/></svg>
+        <h3>Attorney Handoff</h3>
+        <p>Concise, structured case files designed to reduce attorney ramp-up time.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= HUMAN IN THE LOOP ================= -->
+<section class="section panel">
+  <div class="wrap">
+    <div class="eyebrow reveal">Human-in-the-Loop</div>
+    <h2 class="display section-title reveal" style="text-align:center">AI speed. <span class="hl">Human judgment.</span></h2>
+
+    <div class="loop-stack">
+      <div class="loop-tier t1 reveal">AI Drafts<small>Fast, structured, tireless first passes</small></div>
+      <div class="loop-arrow reveal">&darr;</div>
+      <div class="loop-tier reveal">Legal Support Organizes<small>Workflows keep every matter structured</small></div>
+      <div class="loop-arrow reveal">&darr;</div>
+      <div class="loop-tier reveal">Trained Reviewers Verify<small>Facts, citations, and materials get checked</small></div>
+      <div class="loop-arrow reveal">&darr;</div>
+      <div class="loop-tier t4 reveal">Licensed Attorneys Provide Legal Judgment When Engaged<small>Professional responsibility stays where it belongs</small></div>
+    </div>
+    <p class="lede reveal" style="margin:44px auto 0; text-align:center">Technology should amplify professional judgment, not pretend to replace it.</p>
+  </div>
+</section>
+
+<!-- ================= ORIGIN ================= -->
+<section class="section" id="story">
+  <div class="wrap">
+    <div class="eyebrow reveal">The Origin of ALG</div>
+    <h2 class="display section-title reveal">Built from <span class="hl">necessity.</span></h2>
+
+    <div class="origin">
+      <div class="reveal">
+        <div class="portrait">
+          <div class="portrait-initials">AO</div>
+          <div class="portrait-cap">Amber Ostergaard, Founder</div>
+        </div>
+      </div>
+      <div class="origin-copy reveal">
+        <p>ALG began when <strong>Amber Ostergaard</strong> faced complex litigation without the resources typically required to sustain expensive legal representation.</p>
+        <p>Rather than give up, she began developing AI-assisted workflows to help understand the case, organize information, research issues, and prepare litigation materials.</p>
+        <div class="origin-hours">
+          <div class="n">1,200+</div>
+          <div class="l">hours of development and experimentation followed</div>
+        </div>
+        <p>She used the system to help organize her case, analyze issues, prepare litigation materials, research arguments, and assist with drafting court documents. The experience demonstrated something important: modern AI can dramatically increase the capabilities of people who otherwise may not be able to afford extensive traditional legal representation.</p>
+        <div class="origin-q">What if these capabilities could help <span>millions of other people?</span></div>
+        <a class="btn btn-ghost" href="#case-study">Read the ALG Story <span class="arrow">&rarr;</span></a>
+        <div class="verify-note" id="case-study">
+          <b>Case study in verification.</b> A detailed case-study page with specific procedural outcomes, court documents, quotations, and docket references will be published after legal verification of the public record. No outcome claims are made here.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CHAOS TO COUNSEL ================= -->
+<section class="section panel">
+  <div class="wrap">
+    <div class="eyebrow reveal">From Chaos to Counsel-Ready</div>
+    <h2 class="display section-title reveal">Make your attorney <span class="hl">more effective.</span></h2>
+    <p class="lede reveal" style="margin-top:24px">Justice Amplified is not anti-lawyer. The better organized the client, the more valuable attorney time becomes.</p>
+
+    <div class="chaos">
+      <div class="chaos-col messy reveal">
+        <h3>Messy Case</h3>
+        <ul>
+          <li>Hundreds of emails</li>
+          <li>Documents everywhere</li>
+          <li>Conflicting timelines</li>
+          <li>Unorganized evidence</li>
+          <li>Hours explaining background</li>
+        </ul>
+      </div>
+      <div class="chaos-flow reveal">&rarr;</div>
+      <div class="chaos-col mid reveal">
+        <h3>Justice<br>Amplified</h3>
+      </div>
+      <div class="chaos-flow reveal">&rarr;</div>
+      <div class="chaos-col ready reveal">
+        <h3>Counsel-Ready File</h3>
+        <ul>
+          <li>Executive summary</li>
+          <li>Chronology</li>
+          <li>Key documents</li>
+          <li>Evidence map</li>
+          <li>Issue list</li>
+          <li>Research questions</li>
+          <li>Important deadlines</li>
+        </ul>
+      </div>
+    </div>
+    <div class="attorney-gain reveal">
+      <span class="lab">Attorney time shifts to</span>
+      <span class="gain-chip">Strategy</span>
+      <span class="gain-chip">Judgment</span>
+      <span class="gain-chip">Negotiation</span>
+      <span class="gain-chip">Advocacy</span>
+    </div>
+  </div>
+</section>
+
+<!-- ================= BUSINESSES + ATTORNEYS ================= -->
+<section class="section" id="businesses">
+  <div class="wrap">
+    <div class="split">
+      <div class="split-card reveal">
+        <div class="corner"></div>
+        <div class="eyebrow">For Small Businesses</div>
+        <h3>Legal intelligence for entrepreneurs.</h3>
+        <p class="sub">Handle the legal side of running a business without a retainer you can't afford.</p>
+        <div class="tag-grid">
+          <span class="chip">Contracts</span><span class="chip">Vendor disputes</span><span class="chip">Customer disputes</span><span class="chip">Demand letters</span><span class="chip">Employment documentation</span><span class="chip">Business records</span><span class="chip">Corporate documents</span><span class="chip">Litigation preparation</span><span class="chip">Attorney handoff</span>
+        </div>
+        <a class="btn btn-primary" href="#pricing">Protect My Business <span class="arrow">&rarr;</span></a>
+      </div>
+      <div class="split-card reveal" id="attorneys">
+        <div class="corner"></div>
+        <div class="eyebrow">Justice Amplified Pro</div>
+        <h3>Your clients arrive prepared.</h3>
+        <p class="sub">AI-powered client preparation for modern law firms. Spend billable hours on judgment, not on assembling the file.</p>
+        <div class="tag-grid">
+          <span class="chip">Client intake</span><span class="chip">Chronology generation</span><span class="chip">Document summaries</span><span class="chip">Evidence organization</span><span class="chip">Issue spotting assistance</span><span class="chip">Case packet generation</span><span class="chip">Research assistance</span><span class="chip">Draft preparation</span>
+        </div>
+        <a class="btn btn-ghost" href="#network">Join the Attorney Network <span class="arrow">&rarr;</span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ATTORNEY NETWORK ================= -->
+<section class="section panel" id="network">
+  <div class="wrap">
+    <div class="eyebrow reveal">Attorney Network</div>
+    <h2 class="display section-title reveal">Need a lawyer? <span class="hl">Add one.</span></h2>
+    <p class="lede reveal" style="margin-top:24px">A growing network of independent attorneys you can bring into your matter where available. Filter by what matters to you:</p>
+    <div class="net-filters reveal">
+      <span class="chip">State</span><span class="chip">Practice area</span><span class="chip">Experience</span><span class="chip">Consultation type</span><span class="chip">Pricing model</span><span class="chip">Availability</span>
+    </div>
+    <div class="net-levels">
+      <div class="net-level reveal"><h4>Document Review</h4><p>A licensed set of eyes on what you've built.</p></div>
+      <div class="net-level reveal"><h4>Strategy Session</h4><p>Focused consultation on direction and risk.</p></div>
+      <div class="net-level reveal"><h4>Limited-Scope Representation</h4><p>An attorney handles defined parts of your matter.</p></div>
+      <div class="net-level reveal"><h4>Full Representation</h4><p>Traditional engagement where offered.</p></div>
+    </div>
+    <p class="price-fine reveal">Network attorneys are independent professionals, not employees or agents of Justice Amplified. Engagements are subject to jurisdiction, conflicts checks, separate engagement agreements, availability, professional rules, and attorney approval.</p>
+  </div>
+</section>
+
+<!-- ================= PRICING ================= -->
+<section class="section" id="pricing">
+  <div class="wrap">
+    <div class="eyebrow reveal">Pricing</div>
+    <h2 class="display section-title reveal">Start small. <span class="hl">Get help when you need it.</span></h2>
+
+    <div class="price-grid">
+      <div class="price-card reveal">
+        <div class="price-tier">Level 1</div>
+        <h3>Access</h3>
+        <div class="price-amount">Free<small>/ low cost</small></div>
+        <p class="desc">AI-powered self-help and legal-information tools. Organize your situation, your documents, and your questions.</p>
+        <a class="btn btn-ghost" href="mailto:hello@justiceamplified.com?subject=Start%20Free%20%C2%B7%20Justice%20Amplified">Start Free</a>
+      </div>
+      <div class="price-card hot reveal">
+        <div class="price-tier">Level 2</div>
+        <h3>Guided</h3>
+        <div class="price-amount">$300&ndash;$500<small>from</small></div>
+        <p class="desc">Structured support and case preparation where legally permissible, with attorney-ready packets at the end.</p>
+        <a class="btn btn-primary" href="mailto:hello@justiceamplified.com?subject=Guided%20Support%20%C2%B7%20Justice%20Amplified">Get Guided Help</a>
+      </div>
+      <div class="price-card reveal">
+        <div class="price-tier">Level 3</div>
+        <h3>Attorney Review</h3>
+        <div class="price-amount">$1,000+<small>from</small></div>
+        <p class="desc">Independent attorney review where available: documents, strategy, filings, and risk.</p>
+        <a class="btn btn-ghost" href="#network">Request Attorney Review</a>
+      </div>
+      <div class="price-card gold reveal">
+        <div class="price-tier">Level 4</div>
+        <h3>Representation</h3>
+        <div class="price-amount">Custom</div>
+        <p class="desc">Limited-scope or full representation where available, for matters that need substantially more attorney involvement.</p>
+        <a class="btn btn-ghost" href="#network">Find an Attorney</a>
+      </div>
+    </div>
+    <p class="price-fine reveal">Prices shown are illustrative and may vary by matter, jurisdiction, provider, scope, and complexity. Legal services, where offered, are provided only by appropriately licensed attorneys under separate engagement terms.</p>
+  </div>
+</section>
+
+<!-- ================= TRUST ================= -->
+<section class="section panel" id="trust">
+  <div class="wrap">
+    <div class="eyebrow reveal">Safety and Trust</div>
+    <h2 class="display section-title reveal">AI is powerful. <span class="hl">Verification is essential.</span></h2>
+
+    <div class="trust-grid">
+      <div class="trust-cell reveal">
+        <h4>No Blind Trust in AI</h4>
+        <p>Generated material should be verified before you rely on it.</p>
+      </div>
+      <div class="trust-cell reveal">
+        <h4>Citations Checked</h4>
+        <p>Legal authorities should be independently confirmed before reliance or filing.</p>
+      </div>
+      <div class="trust-cell reveal">
+        <h4>Human Escalation</h4>
+        <p>High-risk decisions should be escalated to human professionals appropriately.</p>
+      </div>
+      <div class="trust-cell reveal">
+        <h4>Confidentiality</h4>
+        <p>Designed for strong privacy and security practices from the ground up.</p>
+      </div>
+      <div class="trust-cell reveal">
+        <h4>Transparency</h4>
+        <p>You always know whether you're interacting with AI or a human professional.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FINAL CTA ================= -->
+<section class="final">
+  <div class="final-beam"></div>
+  <div class="wrap">
+    <h2 class="display reveal">You shouldn't have to be rich<br><span class="hl">to understand your rights.</span></h2>
+    <p class="reveal">Start organizing your situation with AI-powered legal technology and add professional human assistance when you need it.</p>
+    <div class="hero-ctas reveal">
+      <a class="btn btn-primary" href="#pricing">Start Your Case <span class="arrow">&rarr;</span></a>
+      <a class="btn btn-ghost" href="#how">See How It Works</a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= LEGAL DISCLOSURES ================= -->
+<section class="section panel" id="legal">
+  <div class="wrap">
+    <div class="eyebrow reveal">Legal and Disclosures</div>
+    <h2 class="display section-title reveal" style="font-size:clamp(32px,4.5vw,56px)">Clear terms. <span class="hl">No fine-print games.</span></h2>
+    <p class="lede reveal" style="margin-top:22px">Summaries of each policy appear below. Full policy text is in preparation and will be published before launch, following review by qualified regulatory and professional-responsibility counsel.</p>
+
+    <div class="legal-list reveal">
+      <details class="legal-item" id="legal-terms">
+        <summary>Terms of Service</summary>
+        <div class="legal-body">The agreement governing your use of Justice Amplified technology and legal-information tools, including acceptable use, account terms, and limitations of liability. <b>Full text pending counsel review.</b></div>
+      </details>
+      <details class="legal-item" id="legal-privacy">
+        <summary>Privacy Policy</summary>
+        <div class="legal-body">How your information and documents are collected, used, stored, and protected, and the choices you have. Designed around strong privacy and security practices. <b>Full text pending counsel review.</b></div>
+      </details>
+      <details class="legal-item" id="legal-ai">
+        <summary>AI Disclosure</summary>
+        <div class="legal-body">When you are interacting with AI versus a human professional, what AI-generated material is, and why it may contain errors and should be independently verified before reliance or filing. <b>Full text pending counsel review.</b></div>
+      </details>
+      <details class="legal-item" id="legal-attorney">
+        <summary>Attorney Relationship Disclosure</summary>
+        <div class="legal-body">Use of the technology alone does not create an attorney-client relationship. Legal services, where offered, are provided only through appropriately licensed, independent attorneys under separate engagement terms, subject to jurisdiction, conflicts checks, availability, professional rules, and attorney approval. <b>Full text pending counsel review.</b></div>
+      </details>
+      <details class="legal-item" id="legal-disclaimer">
+        <summary>Legal Disclaimer</summary>
+        <div class="legal-body">Justice Amplified provides legal information and self-help technology, not individualized legal advice. The AI is not a lawyer and does not practice law. Nothing on this site is a guarantee of any outcome. <b>Full text pending counsel review.</b></div>
+      </details>
+      <details class="legal-item" id="legal-jurisdictions">
+        <summary>Jurisdictional Availability</summary>
+        <div class="legal-body">Features and services vary by jurisdiction. Some services, including guided support and attorney services, are offered only where legally permissible. <b>Full text pending counsel review.</b></div>
+      </details>
+      <details class="legal-item" id="legal-accessibility">
+        <summary>Accessibility</summary>
+        <div class="legal-body">Our commitment to an accessible experience across devices and assistive technologies, and how to reach us if something isn't working for you. <b>Full text pending counsel review.</b></div>
+      </details>
+      <details class="legal-item" id="legal-security">
+        <summary>Security</summary>
+        <div class="legal-body">How the platform is designed to protect confidential matter information, including encryption, access controls, and secure document handling. <b>Full text pending counsel review.</b></div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <a class="logo" href="#top">
+          <svg class="logo-mark" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+            <path d="M16 3v22" stroke="#087CFF" stroke-width="2"/>
+            <path d="M6 8h20" stroke="#087CFF" stroke-width="2"/>
+            <path d="M6 8l-3.5 8a4.5 4.5 0 0 0 9 0L8 8" stroke="#00A8FF" stroke-width="1.6" fill="none"/>
+            <path d="M26 8l-3.5 8a4.5 4.5 0 0 0 9 0L28 8" stroke="#00A8FF" stroke-width="1.6" fill="none"/>
+            <path d="M11 28h10" stroke="#C9A45C" stroke-width="2"/>
+          </svg>
+          <span class="logo-word">Justice<span>Amplified</span></span>
+        </a>
+        <p>Technology that amplifies access to justice.</p>
+      </div>
+      <div class="foot-col">
+        <h5>Product</h5>
+        <a href="#individuals">Individuals</a>
+        <a href="#businesses">Businesses</a>
+        <a href="#attorneys">Attorneys</a>
+        <a href="#pricing">Pricing</a>
+      </div>
+      <div class="foot-col">
+        <h5>Resources</h5>
+        <a href="#how">How It Works</a>
+        <a href="#trust">Safety and Trust</a>
+        <a href="#story">The ALG Story</a>
+        <a href="#network">Attorney Network</a>
+      </div>
+      <div class="foot-col">
+        <h5>Company</h5>
+        <a href="#story">About</a>
+        <a href="#attorneys">Justice Amplified Pro</a>
+        <a href="mailto:hello@justiceamplified.com">Contact</a>
+      </div>
+      <div class="foot-col">
+        <h5>Legal</h5>
+        <a href="#legal-terms">Terms of Service</a>
+        <a href="#legal-privacy">Privacy Policy</a>
+        <a href="#legal-ai">AI Disclosure</a>
+        <a href="#legal-attorney">Attorney Relationship Disclosure</a>
+        <a href="#legal-disclaimer">Legal Disclaimer</a>
+        <a href="#legal-jurisdictions">Jurisdictional Availability</a>
+        <a href="#legal-accessibility">Accessibility</a>
+        <a href="#legal-security">Security</a>
+      </div>
+    </div>
+
+    <div class="foot-disclaimer">
+      Justice Amplified provides technology and legal-information tools. Use of the technology alone does not create an attorney-client relationship. Legal services, where offered, are provided only through appropriately licensed attorneys pursuant to separate engagement terms. Availability varies by jurisdiction. AI-generated information may contain errors and should be independently verified before reliance or filing. Nothing on this site is a guarantee of any outcome.
+    </div>
+
+    <div class="foot-base">
+      <div>&copy; 2026 Justice Amplified. All rights reserved.</div>
+      <div class="links">
+        <a href="#legal-terms">Terms</a>
+        <a href="#legal-privacy">Privacy</a>
+        <a href="#legal-ai">AI Disclosure</a>
+        <a href="#legal-accessibility">Accessibility</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  function toggleMenu(btn) {
+    var menu = document.getElementById('mobileMenu');
+    var open = menu.classList.toggle('open');
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+  document.querySelectorAll('.mobile-menu a').forEach(function (a) {
+    a.addEventListener('click', function () {
+      document.getElementById('mobileMenu').classList.remove('open');
+      document.querySelector('.nav-burger').setAttribute('aria-expanded', 'false');
+    });
+  });
+
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!reduce && 'IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
+  } else {
+    document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); });
+  }
+
+  // Scrollspy: highlight the nav link for the section currently in view
+  var spyLinks = Array.prototype.slice.call(document.querySelectorAll('.nav-links a[href^="#"]'));
+  var spyTargets = spyLinks.map(function (a) { return document.querySelector(a.getAttribute('href')); }).filter(Boolean);
+  function setActive(id) {
+    spyLinks.forEach(function (a) { a.classList.toggle('active', a.getAttribute('href') === '#' + id); });
+  }
+  if ('IntersectionObserver' in window && spyTargets.length) {
+    var spy = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { if (e.isIntersecting) setActive(e.target.id); });
+    }, { rootMargin: '-30% 0px -60% 0px' });
+    spyTargets.forEach(function (t) { spy.observe(t); });
+  }
+
+  // Deep links into the legal accordion open the targeted policy
+  function openLegalTarget() {
+    var hash = window.location.hash;
+    if (hash && hash.indexOf('#legal-') === 0) {
+      var item = document.querySelector(hash);
+      if (item && item.tagName === 'DETAILS') item.open = true;
+    }
+  }
+  window.addEventListener('hashchange', openLegalTarget);
+  openLegalTarget();
+  document.querySelectorAll('a[href^="#legal-"]').forEach(function (a) {
+    a.addEventListener('click', function () {
+      var item = document.querySelector(a.getAttribute('href'));
+      if (item && item.tagName === 'DETAILS') item.open = true;
+    });
+  });
+</script>
+</body>
+</html>
