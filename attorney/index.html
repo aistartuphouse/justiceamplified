@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Attorney Portal · Justice Amplified Pro</title>
+<meta name="description" content="Justice Amplified Pro: AI-powered client preparation for modern law firms. Intake queue, case packets, and review requests.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg0: #02050B; --bg1: #061329; --bg2: #081C38;
+    --ink: #F2F6FF; --muted: #93A6C7; --dim: #5F7398;
+    --blue: #087CFF; --cyan: #00A8FF; --gold: #C9A45C; --gold-soft: rgba(201,164,92,0.4);
+    --good: #2BD9A0; --warn: #FFB454;
+    --line: rgba(130,170,255,0.14); --line-strong: rgba(130,170,255,0.28);
+    --display: 'Big Shoulders Display', 'Arial Narrow', sans-serif;
+    --body: 'Public Sans', -apple-system, 'Segoe UI', sans-serif;
+    --mono: 'IBM Plex Mono', 'SF Mono', Menlo, monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { overflow-x: clip; }
+  body { background: var(--bg0); color: var(--ink); font-family: var(--body); font-weight: 300; line-height: 1.55; font-size: 14.5px; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; text-decoration: none; }
+  button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+  ::selection { background: var(--gold); color: #02050B; }
+
+  .chip { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; border: 1px solid var(--line); border-radius: 100px; padding: 4px 11px; color: var(--muted); background: rgba(8,28,56,0.4); white-space: nowrap; }
+  .chip.ok { color: var(--good); border-color: rgba(43,217,160,0.35); }
+  .chip.warn { color: var(--warn); border-color: rgba(255,180,84,0.35); }
+  .chip.ai { color: var(--cyan); border-color: rgba(0,168,255,0.35); }
+  .chip.gold { color: var(--gold); border-color: var(--gold-soft); }
+
+  .shell { display: grid; grid-template-rows: 58px 1fr; min-height: 100vh; }
+  @media (min-width: 960px) { .shell { grid-template-columns: 250px 1fr; } }
+
+  .topbar { grid-column: 1 / -1; display: flex; align-items: center; gap: 14px; padding: 0 16px; border-bottom: 1px solid var(--line); background: rgba(2,5,11,0.85); position: sticky; top: 0; z-index: 50; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+  .brand { display: flex; align-items: center; gap: 10px; flex: none; }
+  .brand svg { width: 24px; height: 24px; }
+  .brand-word { font-family: var(--display); font-weight: 700; font-size: 17px; letter-spacing: 0.06em; text-transform: uppercase; }
+  .brand-word span { color: var(--cyan); }
+  .pro-tag { font-family: var(--display); font-weight: 800; font-size: 15px; letter-spacing: 0.12em; color: var(--gold); border: 1px solid var(--gold-soft); border-radius: 4px; padding: 2px 8px; }
+  .env-badge { display: none; font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em; color: var(--warn); border: 1px solid rgba(255,180,84,0.4); border-radius: 4px; padding: 3px 8px; white-space: nowrap; }
+  @media (min-width: 760px) { .env-badge { display: inline-block; } }
+  .user-chip { display: none; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); margin-left: auto; }
+  .avatar { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(120deg, var(--gold), #8a6a2f); display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 11px; color: #0b0b0b; }
+  @media (min-width: 700px) { .user-chip { display: flex; } }
+  .menu-btn { display: flex; flex-direction: column; gap: 4px; padding: 8px; margin-left: auto; }
+  @media (min-width: 700px) { .menu-btn { margin-left: 0; } }
+  .menu-btn span { width: 18px; height: 2px; background: var(--ink); }
+  @media (min-width: 960px) { .menu-btn { display: none; } }
+
+  .sidebar { display: none; border-right: 1px solid var(--line); background: var(--bg0); padding: 18px 12px; flex-direction: column; gap: 2px; }
+  .sidebar.open { display: flex; position: fixed; top: 58px; left: 0; bottom: 0; width: 250px; z-index: 40; overflow-y: auto; }
+  @media (min-width: 960px) { .sidebar { display: flex; position: sticky; top: 58px; height: calc(100vh - 58px); overflow-y: auto; } }
+  .nav-sec { font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--dim); padding: 14px 12px 6px; }
+  .nav-item { display: flex; align-items: center; gap: 10px; text-align: left; width: 100%; padding: 9px 12px; border-radius: 7px; font-size: 13.5px; color: var(--muted); border: 1px solid transparent; }
+  .nav-item:hover { color: var(--ink); background: rgba(8,28,56,0.5); }
+  .nav-item.active { color: var(--gold); background: rgba(201,164,92,0.08); border-color: var(--gold-soft); }
+  .nav-item .n { margin-left: auto; font-family: var(--mono); font-size: 10.5px; color: var(--dim); }
+  .nav-item.active .n { color: var(--gold); }
+  .sidebar-foot { margin-top: auto; padding: 14px 12px; font-size: 11.5px; color: var(--dim); line-height: 1.6; border-top: 1px solid var(--line); }
+  .sidebar-foot a { color: var(--muted); }
+  .sidebar-foot a:hover { color: var(--gold); }
+
+  .main { padding: 24px 18px 60px; max-width: 1180px; width: 100%; margin: 0 auto; }
+  @media (min-width: 960px) { .main { padding: 30px 34px 70px; } }
+  .view { display: none; }
+  .view.active { display: block; animation: fadeUp 0.3s ease both; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .view.active { animation: none; } }
+
+  .view-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 22px; }
+  .view-title { font-family: var(--display); font-weight: 700; text-transform: uppercase; font-size: clamp(26px, 3.4vw, 36px); line-height: 1; letter-spacing: 0.02em; }
+  .view-sub { margin-top: 6px; color: var(--dim); font-size: 13px; }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; padding: 11px 18px; border-radius: 6px; border: 1px solid transparent; white-space: nowrap; transition: transform 0.15s ease, border-color 0.15s ease; }
+  .btn-gold { background: linear-gradient(100deg, var(--gold), #E8CD93); color: #0b0b0b; font-weight: 500; }
+  .btn-gold:hover { transform: translateY(-1px); }
+  .btn-primary { background: linear-gradient(100deg, var(--blue), var(--cyan)); color: #fff; }
+  .btn-primary:hover { transform: translateY(-1px); }
+  .btn-ghost { border-color: var(--line-strong); color: var(--muted); }
+  .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+
+  .panel { border: 1px solid var(--line); border-radius: 10px; background: var(--bg1); }
+  .panel-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 18px; border-bottom: 1px solid var(--line); }
+  .panel-title { font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--dim); }
+  .panel-body { padding: 16px 18px; }
+
+  .stat-row { display: grid; gap: 12px; grid-template-columns: repeat(2, 1fr); margin-bottom: 20px; }
+  @media (min-width: 900px) { .stat-row { grid-template-columns: repeat(4, 1fr); } }
+  .stat { border: 1px solid var(--line); border-radius: 10px; background: var(--bg1); padding: 16px 18px; }
+  .stat .v { font-family: var(--display); font-weight: 700; font-size: 32px; line-height: 1; color: var(--gold); font-variant-numeric: tabular-nums; }
+  .stat .l { margin-top: 6px; font-size: 12px; color: var(--dim); }
+  .stat.blue .v { color: var(--cyan); }
+
+  .tbl-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim); text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line-strong); white-space: nowrap; }
+  td { padding: 12px 14px; border-bottom: 1px solid var(--line); color: var(--muted); vertical-align: middle; white-space: nowrap; }
+  td.wrap { white-space: normal; min-width: 220px; }
+  tr:last-child td { border-bottom: 0; }
+  td b { color: var(--ink); font-weight: 500; }
+  .num { font-variant-numeric: tabular-nums; font-family: var(--mono); font-size: 12px; }
+  .prep { display: inline-flex; align-items: center; gap: 8px; }
+  .prep-bar { width: 64px; height: 5px; border-radius: 3px; background: rgba(130,170,255,0.15); overflow: hidden; }
+  .prep-bar i { display: block; height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--blue), var(--cyan)); }
+
+  .grid-2 { display: grid; gap: 16px; }
+  @media (min-width: 1000px) { .grid-2 { grid-template-columns: 3fr 2fr; } }
+
+  .list { display: grid; }
+  .row { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+  .row:last-child { border-bottom: 0; }
+  .row .grow { flex: 1; min-width: 0; }
+  .row .t { font-size: 13.5px; color: var(--ink); }
+  .row .s { font-size: 12px; color: var(--dim); margin-top: 2px; }
+
+  /* Packet preview */
+  .packet { border: 1px solid var(--gold-soft); border-radius: 12px; background: linear-gradient(180deg, rgba(201,164,92,0.06), var(--bg1)); padding: 22px; }
+  .packet h3 { font-family: var(--display); font-weight: 700; text-transform: uppercase; font-size: 22px; letter-spacing: 0.03em; }
+  .packet .meta { margin-top: 4px; font-family: var(--mono); font-size: 11px; color: var(--dim); }
+  .packet-secs { margin-top: 16px; display: grid; gap: 8px; }
+  @media (min-width: 800px) { .packet-secs { grid-template-columns: repeat(2, 1fr); } }
+  .packet-sec { display: flex; align-items: center; gap: 10px; border: 1px solid var(--line); border-radius: 8px; padding: 11px 14px; font-size: 12.5px; color: var(--muted); background: rgba(2,5,11,0.4); }
+  .packet-sec .ok-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--good); flex: none; }
+  .packet-sec .warn-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--warn); flex: none; }
+  .packet .btns { margin-top: 18px; display: flex; gap: 10px; flex-wrap: wrap; }
+
+  .issue { border: 1px solid var(--line); border-radius: 10px; background: var(--bg1); padding: 16px 18px; margin-bottom: 12px; }
+  .issue .head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .issue .t { font-size: 14px; color: var(--ink); font-weight: 500; }
+  .issue .s { margin-top: 6px; font-size: 12.5px; color: var(--dim); max-width: 80ch; }
+  .issue .tags { margin-top: 10px; display: flex; gap: 6px; flex-wrap: wrap; }
+
+  .foot-note { margin-top: 40px; font-family: var(--mono); font-size: 11px; color: var(--dim); line-height: 1.8; border-top: 1px solid var(--line); padding-top: 18px; max-width: 90ch; }
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <header class="topbar">
+    <button class="menu-btn" aria-label="Toggle navigation" onclick="document.getElementById('sb').classList.toggle('open')"><span></span><span></span><span></span></button>
+    <a class="brand" href="../" title="Back to JusticeAmplified.com">
+      <svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <path d="M16 3v22" stroke="#087CFF" stroke-width="2"/><path d="M6 8h20" stroke="#087CFF" stroke-width="2"/>
+        <path d="M6 8l-3.5 8a4.5 4.5 0 0 0 9 0L8 8" stroke="#00A8FF" stroke-width="1.6" fill="none"/>
+        <path d="M26 8l-3.5 8a4.5 4.5 0 0 0 9 0L28 8" stroke="#00A8FF" stroke-width="1.6" fill="none"/>
+        <path d="M11 28h10" stroke="#C9A45C" stroke-width="2"/>
+      </svg>
+      <span class="brand-word">Justice<span>Amplified</span></span>
+    </a>
+    <span class="pro-tag">PRO</span>
+    <span class="env-badge">Preview · Demo Data</span>
+    <div class="user-chip"><span>A. Counsel, Esq. (sample)</span><div class="avatar">AC</div></div>
+  </header>
+
+  <nav class="sidebar" id="sb" aria-label="Attorney portal navigation">
+    <div class="nav-sec">Practice</div>
+    <button class="nav-item active" data-view="dashboard">Dashboard</button>
+    <button class="nav-item" data-view="requests">Review Requests <span class="n">4</span></button>
+    <button class="nav-item" data-view="intake">Intake Queue <span class="n">3</span></button>
+    <button class="nav-item" data-view="clients">Client Matters <span class="n">5</span></button>
+    <div class="nav-sec">Casework</div>
+    <button class="nav-item" data-view="packets">Case Packets <span class="n">2</span></button>
+    <button class="nav-item" data-view="issues">Issue Spotting</button>
+    <button class="nav-item" data-view="documents">Documents</button>
+    <div class="nav-sec">Firm</div>
+    <button class="nav-item" data-view="messages">Messages <span class="n">2</span></button>
+    <div class="sidebar-foot">
+      Independent attorneys. Engagements under your own terms, conflicts process, and professional rules. <a href="../#legal">Disclosures</a> · <a href="../">justiceamplified.com</a>
+    </div>
+  </nav>
+
+  <main class="main">
+
+    <!-- ========== DASHBOARD ========== -->
+    <section class="view active" id="view-dashboard">
+      <div class="view-head">
+        <div>
+          <h1 class="view-title">Your clients arrive prepared.</h1>
+          <p class="view-sub">Sample firm workspace · all names and matters on this screen are fictional demo content.</p>
+        </div>
+        <button class="btn btn-gold" onclick="go('requests')">Open review queue</button>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat"><div class="v">4</div><div class="l">Review requests awaiting response</div></div>
+        <div class="stat"><div class="v">3</div><div class="l">New intakes pending conflicts check</div></div>
+        <div class="stat blue"><div class="v">2</div><div class="l">Case packets ready to open</div></div>
+        <div class="stat blue"><div class="v">5</div><div class="l">Active client matters</div></div>
+      </div>
+
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-head"><span class="panel-title">Newest review requests</span><button class="btn btn-ghost" style="padding:6px 12px" onclick="go('requests')">View all</button></div>
+          <div class="tbl-wrap"><table>
+            <thead><tr><th>Matter</th><th>Scope</th><th>Prep</th><th>Requested</th></tr></thead>
+            <tbody>
+              <tr><td class="wrap"><b>Vendor contract dispute</b><br><span style="font-size:11.5px;color:var(--dim)">Client: D. User (sample)</span></td><td>Document review</td><td><span class="prep"><span class="prep-bar"><i style="width:70%"></i></span><span class="num">70%</span></span></td><td class="num">Today</td></tr>
+              <tr><td class="wrap"><b>Unpaid invoices, small business</b><br><span style="font-size:11.5px;color:var(--dim)">Client: R. Sample LLC</span></td><td>Strategy session</td><td><span class="prep"><span class="prep-bar"><i style="width:92%"></i></span><span class="num">92%</span></span></td><td class="num">Yesterday</td></tr>
+              <tr><td class="wrap"><b>Lease termination question</b><br><span style="font-size:11.5px;color:var(--dim)">Client: P. Demo (sample)</span></td><td>Document review</td><td><span class="prep"><span class="prep-bar"><i style="width:55%"></i></span><span class="num">55%</span></span></td><td class="num">Oct 24</td></tr>
+            </tbody>
+          </table></div>
+        </div>
+        <div style="display:grid; gap:16px; align-content:start">
+          <div class="panel">
+            <div class="panel-head"><span class="panel-title">Why packets matter</span></div>
+            <div class="panel-body">
+              <div style="display:flex; align-items:baseline; gap:12px">
+                <span style="font-family:var(--display); font-weight:800; font-size:42px; color:var(--gold); line-height:1">&darr; ramp-up</span>
+              </div>
+              <p style="margin-top:10px; font-size:12.5px; color:var(--dim); line-height:1.6">Every request arrives with an executive summary, chronology, evidence map, issue list, and linked documents. Your hours go to strategy, judgment, negotiation, and advocacy, not to assembling the file.</p>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><span class="panel-title">Conflicts discipline</span><span class="chip warn">3 pending</span></div>
+            <div class="panel-body list">
+              <div class="row"><div class="grow"><div class="t">Run conflicts: Northline Supply Co. (sample)</div><div class="s">Party list extracted from intake, ready for your system</div></div><span class="chip warn">Pending</span></div>
+              <div class="row"><div class="grow"><div class="t">Run conflicts: R. Sample LLC parties</div><div class="s">4 named parties</div></div><span class="chip warn">Pending</span></div>
+              <div class="row"><div class="grow"><div class="t">Conflicts cleared: P. Demo matter</div><div class="s">Cleared Oct 24 in your records</div></div><span class="chip ok">Cleared</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="foot-note">Justice Amplified Pro provides client-preparation technology. You remain the lawyer: engagements form only under your own terms after your own conflicts process. AI-generated summaries and issue flags are drafting aids to verify, never a substitute for professional judgment.</p>
+    </section>
+
+    <!-- ========== REVIEW REQUESTS ========== -->
+    <section class="view" id="view-requests">
+      <div class="view-head">
+        <div><h1 class="view-title">Review Requests</h1><p class="view-sub">Users requesting independent attorney help. Accepting opens your engagement workflow; nothing forms until you say so.</p></div>
+      </div>
+      <div class="panel">
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Matter</th><th>Scope requested</th><th>Jurisdiction</th><th>Prep</th><th>Conflicts</th><th></th></tr></thead>
+          <tbody>
+            <tr>
+              <td class="wrap"><b>Vendor contract dispute</b><br><span style="font-size:11.5px;color:var(--dim)">D. User (sample) · packet: summary, 57-event chronology, 24 docs</span></td>
+              <td>Document review</td><td>Sample State</td>
+              <td><span class="prep"><span class="prep-bar"><i style="width:70%"></i></span><span class="num">70%</span></span></td>
+              <td><span class="chip warn">Run check</span></td>
+              <td><button class="btn btn-gold" style="padding:8px 14px">Open packet</button></td>
+            </tr>
+            <tr>
+              <td class="wrap"><b>Unpaid invoices, small business</b><br><span style="font-size:11.5px;color:var(--dim)">R. Sample LLC · packet complete, 3 demand letters drafted</span></td>
+              <td>Strategy session</td><td>Sample State</td>
+              <td><span class="prep"><span class="prep-bar"><i style="width:92%"></i></span><span class="num">92%</span></span></td>
+              <td><span class="chip warn">Run check</span></td>
+              <td><button class="btn btn-gold" style="padding:8px 14px">Open packet</button></td>
+            </tr>
+            <tr>
+              <td class="wrap"><b>Lease termination question</b><br><span style="font-size:11.5px;color:var(--dim)">P. Demo (sample) · packet partially verified by client</span></td>
+              <td>Document review</td><td>Sample State</td>
+              <td><span class="prep"><span class="prep-bar"><i style="width:55%"></i></span><span class="num">55%</span></span></td>
+              <td><span class="chip ok">Cleared</span></td>
+              <td><button class="btn btn-ghost" style="padding:8px 14px">Open packet</button></td>
+            </tr>
+            <tr>
+              <td class="wrap"><b>Employment documentation review</b><br><span style="font-size:11.5px;color:var(--dim)">T. Example (sample) · limited-scope inquiry</span></td>
+              <td>Limited scope</td><td>Other state</td>
+              <td><span class="prep"><span class="prep-bar"><i style="width:35%"></i></span><span class="num">35%</span></span></td>
+              <td><span class="chip">Out of jurisdiction</span></td>
+              <td><button class="btn btn-ghost" style="padding:8px 14px">Decline</button></td>
+            </tr>
+          </tbody>
+        </table></div>
+      </div>
+      <p class="foot-note">Accept or decline freely. Requests outside your jurisdiction or practice area can be returned to the network. No attorney-client relationship forms until your engagement agreement is signed.</p>
+    </section>
+
+    <!-- ========== INTAKE ========== -->
+    <section class="view" id="view-intake">
+      <div class="view-head">
+        <div><h1 class="view-title">Intake Queue</h1><p class="view-sub">Structured client intake, extracted and normalized by AI, with parties listed for your conflicts system.</p></div>
+      </div>
+      <div class="issue">
+        <div class="head"><div class="t">Vendor contract dispute · D. User (sample)</div><span class="chip ai">AI-structured</span></div>
+        <div class="s">Parties: D. User; Northline Supply Co. (fictional); 2 individual contacts. Claim themes: nonconforming goods, refund refusal, limitation clause. Requested: document review.</div>
+        <div class="tags"><span class="chip">Parties: 4</span><span class="chip">Docs: 24</span><span class="chip warn">Conflicts pending</span></div>
+      </div>
+      <div class="issue">
+        <div class="head"><div class="t">Unpaid invoices · R. Sample LLC</div><span class="chip ai">AI-structured</span></div>
+        <div class="s">Parties: R. Sample LLC; 3 customer entities (fictional). Claim themes: collections, demand strategy. Requested: strategy session.</div>
+        <div class="tags"><span class="chip">Parties: 4</span><span class="chip">Docs: 11</span><span class="chip warn">Conflicts pending</span></div>
+      </div>
+      <div class="issue">
+        <div class="head"><div class="t">Lease termination · P. Demo (sample)</div><span class="chip ok">Conflicts cleared</span></div>
+        <div class="s">Parties: P. Demo; Sample Property Mgmt (fictional). Claim themes: early termination, deposit. Requested: document review.</div>
+        <div class="tags"><span class="chip">Parties: 2</span><span class="chip">Docs: 7</span><span class="chip ok">Ready to accept</span></div>
+      </div>
+    </section>
+
+    <!-- ========== CLIENTS ========== -->
+    <section class="view" id="view-clients">
+      <div class="view-head">
+        <div><h1 class="view-title">Client Matters</h1><p class="view-sub">Matters where your engagement is active. Clients keep organizing; you keep lawyering.</p></div>
+      </div>
+      <div class="panel">
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Client / Matter</th><th>Engagement</th><th>Last client activity</th><th>Packet</th><th>Next date</th></tr></thead>
+          <tbody>
+            <tr><td class="wrap"><b>M. Example · contract negotiation</b></td><td>Limited scope</td><td class="num">Today</td><td><span class="chip ok">Current</span></td><td class="num">Nov 03</td></tr>
+            <tr><td class="wrap"><b>K. Demo LLC · vendor dispute</b></td><td>Document review</td><td class="num">Oct 24</td><td><span class="chip ok">Current</span></td><td class="num">Nov 07</td></tr>
+            <tr><td class="wrap"><b>J. Placeholder · civil matter</b></td><td>Full representation</td><td class="num">Oct 23</td><td><span class="chip warn">2 new uploads</span></td><td class="num">Nov 12</td></tr>
+            <tr><td class="wrap"><b>S. Fictional · demand letter</b></td><td>Limited scope</td><td class="num">Oct 19</td><td><span class="chip ok">Current</span></td><td class="num">None</td></tr>
+            <tr><td class="wrap"><b>B. Sample · settlement talks</b></td><td>Strategy counsel</td><td class="num">Oct 15</td><td><span class="chip ok">Current</span></td><td class="num">Nov 20</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </section>
+
+    <!-- ========== PACKETS ========== -->
+    <section class="view" id="view-packets">
+      <div class="view-head">
+        <div><h1 class="view-title">Case Packets</h1><p class="view-sub">Concise, structured case files designed to reduce ramp-up time. Open one and start at the summary, not the shoebox.</p></div>
+      </div>
+      <div style="display:grid; gap:16px">
+        <div class="packet">
+          <h3>Unpaid invoices · R. Sample LLC</h3>
+          <div class="meta">PACKET v4 · GENERATED OCT 25 · CLIENT-VERIFIED 92% · ALL CONTENT FICTIONAL DEMO DATA</div>
+          <div class="packet-secs">
+            <div class="packet-sec"><span class="ok-dot"></span>Executive summary · 2 pages</div>
+            <div class="packet-sec"><span class="ok-dot"></span>Chronology · 38 events, client-verified</div>
+            <div class="packet-sec"><span class="ok-dot"></span>Evidence map · 19 items linked to issues</div>
+            <div class="packet-sec"><span class="ok-dot"></span>Issue list · 4 issues with record cites</div>
+            <div class="packet-sec"><span class="ok-dot"></span>Key documents · 11, bookmarked</div>
+            <div class="packet-sec"><span class="ok-dot"></span>Open questions · 3 flagged for counsel</div>
+          </div>
+          <div class="btns"><button class="btn btn-gold">Open full packet</button><button class="btn btn-ghost">Download PDF</button></div>
+        </div>
+        <div class="packet" style="border-color:var(--line)">
+          <h3>Vendor contract dispute · D. User</h3>
+          <div class="meta">PACKET v2 · GENERATED TODAY · CLIENT-VERIFIED 70% · ALL CONTENT FICTIONAL DEMO DATA</div>
+          <div class="packet-secs">
+            <div class="packet-sec"><span class="ok-dot"></span>Executive summary · 2 pages</div>
+            <div class="packet-sec"><span class="warn-dot"></span>Chronology · 57 events, 1 date conflict open</div>
+            <div class="packet-sec"><span class="ok-dot"></span>Evidence map · 31 items</div>
+            <div class="packet-sec"><span class="warn-dot"></span>Issue list · 2 quotes pending client verification</div>
+            <div class="packet-sec"><span class="ok-dot"></span>Key documents · 24, bookmarked</div>
+            <div class="packet-sec"><span class="ok-dot"></span>Open questions · 2 flagged for counsel</div>
+          </div>
+          <div class="btns"><button class="btn btn-ghost">Open full packet</button><button class="btn btn-ghost">Request client verification</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== ISSUES ========== -->
+    <section class="view" id="view-issues">
+      <div class="view-head">
+        <div><h1 class="view-title">Issue Spotting</h1><p class="view-sub">AI-flagged issues with record citations. Drafting aids for your judgment, not conclusions.</p></div>
+      </div>
+      <div class="issue">
+        <div class="head"><div class="t">Limitation-of-remedy clause may be contested · vendor dispute</div><span class="chip ai">AI-flagged</span></div>
+        <div class="s">Contract §7 caps refunds; client's facts include repeated nonconforming deliveries with photographic support. The packet links the clause text, the delivery record, and the client's notice emails for your assessment.</div>
+        <div class="tags"><span class="chip">Record: §7, Events 14 to 34</span><span class="chip gold">Counsel judgment</span></div>
+      </div>
+      <div class="issue">
+        <div class="head"><div class="t">Notice timing question · vendor dispute</div><span class="chip ai">AI-flagged</span></div>
+        <div class="s">§9 requires written notice within a set window. Client's first written notice is Event 14; whether earlier verbal notice matters is flagged as an open question.</div>
+        <div class="tags"><span class="chip">Record: §9, Event 14</span><span class="chip warn">Client verifying dates</span></div>
+      </div>
+      <div class="issue">
+        <div class="head"><div class="t">Statute-of-limitations check · collections matter</div><span class="chip ai">AI-flagged</span></div>
+        <div class="s">Oldest unpaid invoice dates to 2024 in the sample data. Flagged for a limitations review in your jurisdiction before demand strategy is set.</div>
+        <div class="tags"><span class="chip">Record: invoices 1 to 3</span><span class="chip gold">Counsel judgment</span></div>
+      </div>
+    </section>
+
+    <!-- ========== DOCUMENTS ========== -->
+    <section class="view" id="view-documents">
+      <div class="view-head">
+        <div><h1 class="view-title">Documents</h1><p class="view-sub">Client uploads, AI summaries, and your work product, kept separate and labeled.</p></div>
+      </div>
+      <div class="panel">
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Document</th><th>Matter</th><th>Source</th><th>Summary</th><th>Added</th></tr></thead>
+          <tbody>
+            <tr><td class="wrap"><b>Master supply agreement.pdf</b></td><td>Vendor dispute</td><td><span class="chip">Client upload</span></td><td><span class="chip ai">AI summary ready</span></td><td class="num">Sep 18</td></tr>
+            <tr><td class="wrap"><b>Chronology export v2.pdf</b></td><td>Vendor dispute</td><td><span class="chip ai">Generated</span></td><td><span class="chip warn">1 conflict open</span></td><td class="num">Today</td></tr>
+            <tr><td class="wrap"><b>Demand letter set (3).docx</b></td><td>Collections</td><td><span class="chip ai">Client draft</span></td><td><span class="chip ai">AI summary ready</span></td><td class="num">Oct 22</td></tr>
+            <tr><td class="wrap"><b>Counsel notes.docx</b></td><td>Collections</td><td><span class="chip gold">Your work product</span></td><td><span class="chip">Private</span></td><td class="num">Oct 25</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </section>
+
+    <!-- ========== MESSAGES ========== -->
+    <section class="view" id="view-messages">
+      <div class="view-head">
+        <div><h1 class="view-title">Messages</h1><p class="view-sub">Client communication, clearly separated from AI notifications.</p></div>
+      </div>
+      <div class="panel"><div class="panel-body list">
+        <div class="row"><div class="avatar" style="background:var(--bg2); border:1px solid var(--line-strong); color:var(--muted)">MD</div><div class="grow"><div class="t">M. Example: "Uploaded the signed addendum, thank you"</div><div class="s">Contract negotiation · today</div></div><span class="chip ok">Client</span></div>
+        <div class="row"><div class="avatar" style="background:var(--bg2); border:1px solid rgba(0,168,255,0.4); color:var(--cyan)">AI</div><div class="grow"><div class="t">Packet updated: J. Placeholder added 2 documents</div><div class="s">System notification · Oct 23</div></div><span class="chip ai">System</span></div>
+      </div></div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  var items = document.querySelectorAll('.nav-item');
+  function go(name) {
+    document.querySelectorAll('.view').forEach(function (v) { v.classList.remove('active'); });
+    var target = document.getElementById('view-' + name);
+    if (!target) return;
+    target.classList.add('active');
+    items.forEach(function (b) { b.classList.toggle('active', b.getAttribute('data-view') === name); });
+    document.getElementById('sb').classList.remove('open');
+    try { if (location.hash !== '#' + name) history.replaceState(null, '', '#' + name); } catch (e) {}
+    window.scrollTo(0, 0);
+  }
+  items.forEach(function (b) { b.addEventListener('click', function () { go(b.getAttribute('data-view')); }); });
+  var initial = (location.hash || '').replace('#', '');
+  if (initial && document.getElementById('view-' + initial)) go(initial);
+</script>
+</body>
+</html>
