@@ -311,18 +311,18 @@
       <div class="fresh-only">
         <div class="stat-row">
           <div class="stat"><div class="v">1</div><div class="l">Matter workspace created</div></div>
-          <div class="stat"><div class="v">0</div><div class="l">Documents uploaded</div></div>
+          <div class="stat"><div class="v" id="freshDocStat">0</div><div class="l">Documents uploaded</div></div>
           <div class="stat"><div class="v">0</div><div class="l">Timeline events</div></div>
           <div class="stat"><div class="v">0</div><div class="l">Evidence items mapped</div></div>
         </div>
         <div class="grid-2">
           <div class="panel">
-            <div class="panel-head"><span class="panel-title">Case progress</span><span class="chip">Step 2 of 6</span></div>
+            <div class="panel-head"><span class="panel-title">Case progress</span><span class="chip" id="fstepChip">Step 2 of 6</span></div>
             <div class="panel-body">
               <div class="stepper">
                 <div class="step done"><div class="step-dot">01</div><div class="t">Tell us what happened · intake complete</div></div>
-                <div class="step now"><div class="step-dot">02</div><div class="t">Upload your documents · nothing here yet</div></div>
-                <div class="step"><div class="step-dot">03</div><div class="t">AI organizes the chaos</div></div>
+                <div class="step now" id="fstep2"><div class="step-dot">02</div><div class="t">Upload your documents · nothing here yet</div></div>
+                <div class="step" id="fstep3"><div class="step-dot">03</div><div class="t">AI organizes the chaos</div></div>
                 <div class="step"><div class="step-dot">04</div><div class="t">Build your case file</div></div>
                 <div class="step"><div class="step-dot">05</div><div class="t">Verify</div></div>
                 <div class="step"><div class="step-dot">06</div><div class="t">Escalate when necessary</div></div>
@@ -332,7 +332,7 @@
           <div class="panel">
             <div class="panel-head"><span class="panel-title">What happens next</span></div>
             <div class="panel-body list">
-              <div class="row"><div class="grow"><div class="t">Upload your first documents</div><div class="s">Contracts, emails, photos, anything relevant</div></div><button class="btn btn-ghost" style="padding:6px 12px" onclick="go('documents')">Upload</button></div>
+              <div class="row"><div class="grow"><div class="t" id="freshNext1t">Upload your first documents</div><div class="s" id="freshNext1s">Contracts, emails, photos, anything relevant</div></div><button class="btn btn-ghost" style="padding:6px 12px" onclick="go('documents')">Open</button></div>
               <div class="row"><div class="grow"><div class="t">Review your AI-structured intake</div><div class="s">Check the parties and summary the AI extracted</div></div><button class="btn btn-ghost" style="padding:6px 12px" onclick="go('ai')">Review</button></div>
               <div class="row"><div class="grow"><div class="t">Deadline review</div><div class="s">Queued from your intake answers</div></div><span class="chip">Queued</span></div>
             </div>
@@ -399,7 +399,7 @@
               <div class="t" id="freshMatterTitle">Your matter</div><span class="chip ai">Active</span>
             </div>
             <div class="s" id="freshMatterSub">Created from your intake</div>
-            <div class="tags"><span class="chip">0 documents</span><span class="chip">0 events</span><span class="chip warn">Upload documents to begin</span></div>
+            <div class="tags"><span class="chip" id="freshMatterDocsChip">0 documents</span><span class="chip">0 events</span><span class="chip warn" id="freshMatterHint">Upload documents to begin</span></div>
           </div>
         </div>
       </div>
@@ -430,10 +430,14 @@
         <button class="btn btn-primary">Upload documents</button>
       </div>
       <div class="fresh-only">
-        <div class="empty-card">
+        <div class="empty-card" id="freshDocsEmpty">
           <div class="big">No documents yet</div>
           <p>Upload contracts, correspondence, pleadings, evidence, and photos. The AI links each one to your timeline, evidence map, and issues.</p>
           <button class="btn btn-primary">Upload your first document</button>
+        </div>
+        <div class="panel" id="freshDocsPanel" hidden>
+          <div class="panel-head"><span class="panel-title">Added during intake</span><span class="chip ai">Queued for AI processing</span></div>
+          <div class="panel-body list" id="freshDocsRows"></div>
         </div>
       </div>
       <div class="demo-only">
@@ -724,6 +728,12 @@
 
   // Fresh-account mode: activated when the intake wizard created a workspace
   function esc(s) { var d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
+  function fmtSize(n) {
+    if (!n && n !== 0) return '';
+    if (n < 1024) return n + ' B';
+    if (n < 1048576) return Math.round(n / 1024) + ' KB';
+    return (n / 1048576).toFixed(1) + ' MB';
+  }
   var intake = null;
   try { intake = JSON.parse(localStorage.getItem('ja-intake') || 'null'); } catch (e) {}
   var wantDemo = /[?&]demo=1/.test(location.search);
@@ -743,6 +753,39 @@
     var aw = document.getElementById('aiWelcome');
     if (aw) aw.innerHTML = 'Welcome, ' + esc(first) + '! I\'ve saved your intake for your <b>' + esc((intake.matter || 'matter').toLowerCase()) + '</b>' + (intake.state ? ' in ' + esc(intake.state) : '') + '. Upload your documents and I\'ll start structuring parties, events, and potential issues. Nothing I produce is legal advice, and important items will be flagged for your verification.';
     modeLink.hidden = false; modeLink.textContent = 'View sample data'; modeLink.href = '?demo=1';
+
+    // Documents attached during intake
+    var docs = intake.docs || [];
+    if (docs.length) {
+      var dStat = document.getElementById('freshDocStat'); if (dStat) dStat.textContent = docs.length;
+      var s2 = document.getElementById('fstep2');
+      if (s2) { s2.classList.remove('now'); s2.classList.add('done'); s2.querySelector('.t').textContent = 'Upload your documents · ' + docs.length + ' file' + (docs.length === 1 ? '' : 's') + ' attached'; }
+      var s3 = document.getElementById('fstep3');
+      if (s3) { s3.classList.add('now'); s3.querySelector('.t').textContent = 'AI organizes the chaos · queued'; }
+      var fc = document.getElementById('fstepChip'); if (fc) fc.textContent = 'Step 3 of 6';
+      var n1t = document.getElementById('freshNext1t'); if (n1t) n1t.textContent = 'Review your uploaded documents';
+      var n1s = document.getElementById('freshNext1s'); if (n1s) n1s.textContent = docs.length + ' file' + (docs.length === 1 ? '' : 's') + ' queued for AI processing';
+      var mdc = document.getElementById('freshMatterDocsChip'); if (mdc) mdc.textContent = docs.length + ' document' + (docs.length === 1 ? '' : 's');
+      var mh = document.getElementById('freshMatterHint'); if (mh) { mh.textContent = 'AI processing queued'; mh.classList.remove('warn'); mh.classList.add('ai'); }
+      var dEmpty = document.getElementById('freshDocsEmpty'); if (dEmpty) dEmpty.hidden = true;
+      var dPanel = document.getElementById('freshDocsPanel');
+      var dRows = document.getElementById('freshDocsRows');
+      if (dPanel && dRows) {
+        dPanel.hidden = false;
+        docs.forEach(function (d) {
+          var kind = (d.type || '').indexOf('image') === 0 ? 'IMG' : (((d.type || '').indexOf('pdf') !== -1 || /\.pdf$/i.test(d.name || '')) ? 'PDF' : 'DOC');
+          var row = document.createElement('div'); row.className = 'row';
+          var ic = document.createElement('div'); ic.className = 'doc-ic'; ic.textContent = kind;
+          var grow = document.createElement('div'); grow.className = 'grow';
+          var t = document.createElement('div'); t.className = 't'; t.textContent = d.name || 'Document';
+          var s = document.createElement('div'); s.className = 's'; s.textContent = fmtSize(d.size) + ' · added during intake';
+          grow.appendChild(t); grow.appendChild(s);
+          var chip = document.createElement('span'); chip.className = 'chip ai'; chip.textContent = 'Queued';
+          row.appendChild(ic); row.appendChild(grow); row.appendChild(chip);
+          dRows.appendChild(row);
+        });
+      }
+    }
   } else if (intake && wantDemo) {
     modeLink.hidden = false; modeLink.textContent = 'Back to my workspace'; modeLink.href = './';
   }

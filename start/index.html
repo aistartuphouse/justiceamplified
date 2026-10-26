@@ -83,10 +83,21 @@
   .drop {
     margin-top: 26px; border: 1px dashed var(--line-strong); border-radius: 12px; padding: 36px 20px;
     text-align: center; color: var(--dim); font-size: 13.5px; background: rgba(8,28,56,0.3);
+    cursor: pointer; transition: border-color 0.15s ease, background 0.15s ease;
   }
+  .drop:hover, .drop.over { border-color: var(--cyan); background: rgba(8,124,255,0.08); }
+  .drop:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
   .drop .big { font-family: var(--display); font-weight: 700; text-transform: uppercase; font-size: 19px; color: var(--muted); letter-spacing: 0.04em; }
   .drop .chips { margin-top: 14px; display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
   .chip { font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; border: 1px solid var(--line); border-radius: 100px; padding: 4px 11px; color: var(--muted); background: rgba(8,28,56,0.4); }
+  button.chip:hover { border-color: var(--cyan); color: var(--cyan); }
+  .file-list { margin-top: 14px; display: grid; gap: 8px; }
+  .file-row { display: flex; align-items: center; gap: 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg1); padding: 10px 14px; }
+  .file-ic { width: 30px; height: 30px; border-radius: 6px; border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; color: var(--cyan); font-family: var(--mono); font-size: 8.5px; letter-spacing: 0.04em; flex: none; }
+  .file-row .fn { flex: 1; min-width: 0; font-size: 13px; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .file-row .fs { font-family: var(--mono); font-size: 11px; color: var(--dim); white-space: nowrap; }
+  .file-rm { color: var(--dim); font-size: 16px; padding: 2px 8px; line-height: 1; border-radius: 5px; }
+  .file-rm:hover { color: #FF6B6B; }
 
   .ack { margin-top: 14px; display: flex; gap: 10px; align-items: flex-start; font-size: 13.5px; color: var(--muted); cursor: pointer; border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; background: var(--bg1); }
   .ack input { margin-top: 3px; width: 15px; height: 15px; accent-color: var(--blue); flex: none; }
@@ -106,6 +117,11 @@
   .btn-ghost:hover { border-color: var(--cyan); color: var(--cyan); }
   .skip { margin-left: auto; font-family: var(--mono); font-size: 11.5px; color: var(--dim); letter-spacing: 0.08em; }
   .skip:hover { color: var(--cyan); }
+
+  .req-list { margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .req { font-family: var(--mono); font-size: 11px; letter-spacing: 0.04em; color: var(--dim); border: 1px solid var(--line); border-radius: 100px; padding: 4px 11px; }
+  .req.met { color: var(--good); border-color: rgba(43,217,160,0.4); }
+  .req.met::before { content: "\2713 "; }
 
   .preview-note { margin-top: 36px; font-family: var(--mono); font-size: 11px; color: var(--dim); line-height: 1.8; border-top: 1px solid var(--line); padding-top: 16px; }
 
@@ -232,12 +248,20 @@
     <div class="kicker">Step 7 · Documents</div>
     <h1>Upload relevant documents.</h1>
     <p class="sub">Contracts, correspondence, pleadings, evidence, photos. You can always add more later.</p>
-    <div class="drop">
+    <div class="drop" id="drop" role="button" tabindex="0" aria-label="Add documents">
       <div class="big">Drop files here</div>
-      <div style="margin-top:6px">or tap to browse (disabled in this preview)</div>
-      <div class="chips"><span class="chip">Camera</span><span class="chip">Photo library</span><span class="chip">Files</span><span class="chip">PDF</span></div>
+      <div style="margin-top:6px">or tap anywhere in this box to browse</div>
+      <div class="chips">
+        <button type="button" class="chip" data-accept="image/*" data-capture="environment">Camera</button>
+        <button type="button" class="chip" data-accept="image/*">Photo library</button>
+        <button type="button" class="chip" data-accept="">Files</button>
+        <button type="button" class="chip" data-accept="application/pdf,.pdf">PDF</button>
+      </div>
     </div>
-    <div class="nav-row"><button class="btn btn-ghost" onclick="back()">Back</button><button class="btn btn-primary" onclick="next()">Continue</button><button class="skip" onclick="next()">Skip for now</button></div>
+    <input type="file" id="fileInput" multiple hidden>
+    <div class="file-list" id="fileList"></div>
+    <div class="hint">Preview note: your files are listed here but never leave your device. Only the file names and sizes carry over to your workspace preview.</div>
+    <div class="nav-row"><button class="btn btn-ghost" onclick="back()">Back</button><button class="btn btn-primary" id="docsNext" onclick="next()">Continue</button><button class="skip" onclick="next()">Skip for now</button></div>
   </section>
 
   <!-- STEP 8: Narrative -->
@@ -260,7 +284,15 @@
     <p class="sub">Your matter workspace is private to you.</p>
     <div class="field"><label for="accName">Name</label><input id="accName" type="text" placeholder="Your name" autocomplete="off"></div>
     <div class="field"><label for="accEmail">Email</label><input id="accEmail" type="text" placeholder="you@example.com" autocomplete="off"></div>
-    <div class="hint" style="margin-top:14px">This is a preview: no account is actually created and nothing is transmitted. Your entries stay in this browser so you can see your workspace take shape.</div>
+    <div class="field"><label for="accPass">Password</label><input id="accPass" type="password" placeholder="At least 8 characters" autocomplete="new-password"></div>
+    <div class="req-list">
+      <span class="req" id="reqLen">8+ characters</span>
+      <span class="req" id="reqMix">letters and numbers</span>
+      <span class="req" id="reqCase">upper and lower case</span>
+    </div>
+    <div class="field"><label for="accPass2">Confirm password</label><input id="accPass2" type="password" placeholder="Repeat your password" autocomplete="new-password"></div>
+    <div class="hint" id="passMatchHint" hidden>Passwords don't match yet.</div>
+    <div class="hint" style="margin-top:14px">This is a preview: no account is actually created and nothing is transmitted. Your name and email stay in this browser so you can see your workspace take shape. Your password is used only to demonstrate the secure sign-up flow and is never saved anywhere.</div>
     <div class="nav-row"><button class="btn btn-ghost" onclick="back()">Back</button><button class="btn btn-primary off" data-need="acc" onclick="finish()">Create my matter workspace</button></div>
   </section>
 
@@ -274,6 +306,7 @@
         <div>Secure matter workspace created</div>
         <div>Intake answers saved to your case memory</div>
         <div>AI organization queued: parties, events, issues</div>
+        <div id="doneDocs" hidden></div>
         <div id="doneDeadline">Deadline review flagged</div>
       </div>
     </div>
@@ -335,21 +368,90 @@
     answers.story = this.value;
     document.querySelector('[data-need="story"]').classList.toggle('off', this.value.trim().length < 10);
   });
+  // Document upload (step 7). Files are listed locally; contents never leave the device.
+  var files = [];
+  var drop = document.getElementById('drop');
+  var fileInput = document.getElementById('fileInput');
+  var fileList = document.getElementById('fileList');
+  function fmtSize(n) {
+    if (!n && n !== 0) return '';
+    if (n < 1024) return n + ' B';
+    if (n < 1048576) return Math.round(n / 1024) + ' KB';
+    return (n / 1048576).toFixed(1) + ' MB';
+  }
+  function kindOf(t, name) {
+    t = t || ''; name = name || '';
+    if (t.indexOf('image') === 0) return 'IMG';
+    if (t.indexOf('pdf') !== -1 || /\.pdf$/i.test(name)) return 'PDF';
+    return 'DOC';
+  }
+  function renderFiles() {
+    fileList.innerHTML = '';
+    files.forEach(function (f, i) {
+      var row = document.createElement('div');
+      row.className = 'file-row';
+      var ic = document.createElement('div'); ic.className = 'file-ic'; ic.textContent = kindOf(f.type, f.name);
+      var fn = document.createElement('div'); fn.className = 'fn'; fn.textContent = f.name;
+      var fs = document.createElement('div'); fs.className = 'fs'; fs.textContent = fmtSize(f.size);
+      var rm = document.createElement('button'); rm.className = 'file-rm'; rm.type = 'button';
+      rm.setAttribute('aria-label', 'Remove ' + f.name); rm.textContent = '×';
+      rm.addEventListener('click', function () { files.splice(i, 1); renderFiles(); });
+      row.appendChild(ic); row.appendChild(fn); row.appendChild(fs); row.appendChild(rm);
+      fileList.appendChild(row);
+    });
+    document.getElementById('docsNext').textContent = files.length ? 'Continue with ' + files.length + ' file' + (files.length === 1 ? '' : 's') : 'Continue';
+  }
+  function addFiles(list) {
+    Array.prototype.forEach.call(list, function (f) { files.push({ name: f.name, size: f.size, type: f.type }); });
+    renderFiles();
+  }
+  function openPicker(accept, capture) {
+    fileInput.accept = accept || '';
+    if (capture) fileInput.setAttribute('capture', capture); else fileInput.removeAttribute('capture');
+    fileInput.click();
+  }
+  drop.addEventListener('click', function () { openPicker('', null); });
+  drop.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openPicker('', null); } });
+  drop.querySelectorAll('button.chip').forEach(function (c) {
+    c.addEventListener('click', function (e) { e.stopPropagation(); openPicker(c.getAttribute('data-accept'), c.getAttribute('data-capture')); });
+  });
+  fileInput.addEventListener('change', function () { addFiles(fileInput.files); fileInput.value = ''; });
+  ['dragover', 'dragenter'].forEach(function (ev) { drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.add('over'); }); });
+  ['dragleave', 'drop'].forEach(function (ev) { drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.remove('over'); }); });
+  drop.addEventListener('drop', function (e) { if (e.dataTransfer && e.dataTransfer.files) addFiles(e.dataTransfer.files); });
+
+  // Account step: name, email, and a secure password (demonstration only, never saved)
   function accCheck() {
     var n = document.getElementById('accName').value.trim();
     var e = document.getElementById('accEmail').value.trim();
-    document.querySelector('[data-need="acc"]').classList.toggle('off', !(n && e.indexOf('@') > 0));
+    var p = document.getElementById('accPass').value;
+    var p2 = document.getElementById('accPass2').value;
+    var okLen = p.length >= 8;
+    var okMix = /[A-Za-z]/.test(p) && /[0-9]/.test(p);
+    var okCase = /[a-z]/.test(p) && /[A-Z]/.test(p);
+    document.getElementById('reqLen').classList.toggle('met', okLen);
+    document.getElementById('reqMix').classList.toggle('met', okMix);
+    document.getElementById('reqCase').classList.toggle('met', okCase);
+    var match = p && p === p2;
+    document.getElementById('passMatchHint').hidden = !(p2 && !match);
+    var ready = n && e.indexOf('@') > 0 && okLen && okMix && okCase && match;
+    document.querySelector('[data-need="acc"]').classList.toggle('off', !ready);
   }
-  document.getElementById('accName').addEventListener('input', accCheck);
-  document.getElementById('accEmail').addEventListener('input', accCheck);
+  ['accName', 'accEmail', 'accPass', 'accPass2'].forEach(function (id) {
+    document.getElementById(id).addEventListener('input', accCheck);
+  });
 
   function finish() {
     answers.name = document.getElementById('accName').value.trim();
     answers.email = document.getElementById('accEmail').value.trim();
     answers.matter = answers.issue || 'New matter';
     answers.created = new Date().toISOString().slice(0, 10);
+    answers.docs = files;
+    // The password is intentionally never stored or transmitted.
     try { localStorage.setItem('ja-intake', JSON.stringify(answers)); localStorage.setItem('ja-portal-ack', '1'); } catch (e) {}
     document.getElementById('doneMatter').textContent = answers.matter + ' · ' + (answers.state || '');
+    var dd = document.getElementById('doneDocs');
+    if (files.length) { dd.hidden = false; dd.textContent = files.length + ' document' + (files.length === 1 ? '' : 's') + ' attached, queued for AI processing'; }
     document.getElementById('doneDeadline').textContent = answers.deadlines === 'Yes' ? 'Deadline review flagged as urgent' : 'Deadline review queued';
     show(TOTAL);
   }
