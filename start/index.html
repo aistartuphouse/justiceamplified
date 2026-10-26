@@ -148,7 +148,7 @@
 </header>
 
 <div class="wiz">
-  <div class="progress"><div class="bar"><i id="pbar"></i></div><span class="n" id="pnum">Step 1 of 10</span></div>
+  <div class="progress"><div class="bar"><i id="pbar"></i></div><span class="n" id="pnum">0% complete</span></div>
 
   <!-- STEP 0: Disclosures -->
   <section class="step active" data-step="0">
@@ -330,7 +330,7 @@
     steps.forEach(function (s) { s.classList.toggle('active', +s.getAttribute('data-step') === n); });
     var pct = Math.min(100, Math.round((n / TOTAL) * 100));
     document.getElementById('pbar').style.width = pct + '%';
-    document.getElementById('pnum').textContent = n >= TOTAL ? 'Done' : 'Step ' + (n + 1) + ' of ' + TOTAL;
+    document.getElementById('pnum').textContent = n >= TOTAL ? '100% complete' : pct + '% complete';
     window.scrollTo(0, 0);
   }
   function next() { if (cur < TOTAL) show(cur + 1); }
