@@ -44,6 +44,17 @@
   .chip.ai { color: var(--cyan); border-color: rgba(0,168,255,0.35); }
   .chip.gold { color: var(--gold); border-color: rgba(201,164,92,0.4); }
 
+  /* ---------- Fresh-account mode ---------- */
+  .fresh-only { display: none; }
+  body.fresh .fresh-only { display: block; }
+  body.fresh .demo-only { display: none !important; }
+  .empty-card { border: 1px dashed var(--line-strong); border-radius: 12px; padding: 40px 24px; text-align: center; color: var(--dim); background: rgba(8,28,56,0.25); }
+  .empty-card .big { font-family: var(--display); font-weight: 700; text-transform: uppercase; font-size: 20px; color: var(--muted); letter-spacing: 0.04em; }
+  .empty-card p { margin-top: 8px; font-size: 13px; max-width: 48ch; margin-left: auto; margin-right: auto; }
+  .empty-card .btn { margin-top: 18px; }
+  .mode-link { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.08em; color: var(--dim); border-bottom: 1px dotted var(--dim); white-space: nowrap; }
+  .mode-link:hover { color: var(--cyan); }
+
   /* ---------- App shell ---------- */
   .shell { display: grid; grid-template-rows: 58px 1fr; min-height: 100vh; }
   @media (min-width: 960px) { .shell { grid-template-columns: 240px 1fr; grid-template-rows: 58px 1fr; } }
@@ -255,11 +266,12 @@
       <span class="brand-word">Justice<span>Amplified</span></span>
     </a>
     <span class="env-badge">Preview · Demo Data</span>
-    <select class="matter-select" aria-label="Active matter">
+    <a class="mode-link" id="modeLink" href="?" hidden></a>
+    <select class="matter-select" id="matterSel" aria-label="Active matter">
       <option>Matter: Vendor contract dispute (sample)</option>
       <option>Matter: Security deposit (sample, draft)</option>
     </select>
-    <div class="user-chip"><span>Demo User</span><div class="avatar">DU</div></div>
+    <div class="user-chip"><span id="userName">Demo User</span><div class="avatar" id="userAv">DU</div></div>
   </header>
 
   <!-- Sidebar -->
@@ -290,12 +302,45 @@
     <section class="view active" id="view-dashboard">
       <div class="view-head">
         <div>
-          <h1 class="view-title">Your case, organized.</h1>
-          <p class="view-sub">Vendor contract dispute (sample matter) · All data on this screen is fictional demo content.</p>
+          <h1 class="view-title" id="dashTitle">Your case, organized.</h1>
+          <p class="view-sub" id="dashSub">Vendor contract dispute (sample matter) · All data on this screen is fictional demo content.</p>
         </div>
         <button class="btn btn-primary" onclick="go('ai')">Open AI Workspace</button>
       </div>
 
+      <div class="fresh-only">
+        <div class="stat-row">
+          <div class="stat"><div class="v">1</div><div class="l">Matter workspace created</div></div>
+          <div class="stat"><div class="v">0</div><div class="l">Documents uploaded</div></div>
+          <div class="stat"><div class="v">0</div><div class="l">Timeline events</div></div>
+          <div class="stat"><div class="v">0</div><div class="l">Evidence items mapped</div></div>
+        </div>
+        <div class="grid-2">
+          <div class="panel">
+            <div class="panel-head"><span class="panel-title">Case progress</span><span class="chip">Step 2 of 6</span></div>
+            <div class="panel-body">
+              <div class="stepper">
+                <div class="step done"><div class="step-dot">01</div><div class="t">Tell us what happened · intake complete</div></div>
+                <div class="step now"><div class="step-dot">02</div><div class="t">Upload your documents · nothing here yet</div></div>
+                <div class="step"><div class="step-dot">03</div><div class="t">AI organizes the chaos</div></div>
+                <div class="step"><div class="step-dot">04</div><div class="t">Build your case file</div></div>
+                <div class="step"><div class="step-dot">05</div><div class="t">Verify</div></div>
+                <div class="step"><div class="step-dot">06</div><div class="t">Escalate when necessary</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><span class="panel-title">What happens next</span></div>
+            <div class="panel-body list">
+              <div class="row"><div class="grow"><div class="t">Upload your first documents</div><div class="s">Contracts, emails, photos, anything relevant</div></div><button class="btn btn-ghost" style="padding:6px 12px" onclick="go('documents')">Upload</button></div>
+              <div class="row"><div class="grow"><div class="t">Review your AI-structured intake</div><div class="s">Check the parties and summary the AI extracted</div></div><button class="btn btn-ghost" style="padding:6px 12px" onclick="go('ai')">Review</button></div>
+              <div class="row"><div class="grow"><div class="t">Deadline review</div><div class="s">Queued from your intake answers</div></div><span class="chip">Queued</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="demo-only">
       <div class="stat-row">
         <div class="stat"><div class="v">24</div><div class="l">Documents organized</div></div>
         <div class="stat"><div class="v">57</div><div class="l">Timeline events</div></div>
@@ -337,7 +382,8 @@
           </div>
         </div>
       </div>
-      <p class="foot-note">Sample workspace shown with fictional demo data. AI creates leverage. Humans provide judgment. Generated material should be independently verified before reliance or filing.</p>
+      </div>
+      <p class="foot-note">AI creates leverage. Humans provide judgment. Generated material should be independently verified before reliance or filing.</p>
     </section>
 
     <!-- ========== MATTERS ========== -->
@@ -346,6 +392,18 @@
         <div><h1 class="view-title">My Matters</h1><p class="view-sub">Each legal matter gets its own secure workspace.</p></div>
         <button class="btn btn-primary">+ New Matter</button>
       </div>
+      <div class="fresh-only">
+        <div class="ev-grid" style="grid-template-columns:1fr; max-width:760px">
+          <div class="ev-card" style="border-color:rgba(0,168,255,0.35)">
+            <div style="display:flex; justify-content:space-between; gap:10px; align-items:center">
+              <div class="t" id="freshMatterTitle">Your matter</div><span class="chip ai">Active</span>
+            </div>
+            <div class="s" id="freshMatterSub">Created from your intake</div>
+            <div class="tags"><span class="chip">0 documents</span><span class="chip">0 events</span><span class="chip warn">Upload documents to begin</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="demo-only">
       <div class="ev-grid" style="grid-template-columns:1fr; max-width:760px">
         <div class="ev-card" style="border-color:rgba(0,168,255,0.35)">
           <div style="display:flex; justify-content:space-between; gap:10px; align-items:center">
@@ -362,6 +420,7 @@
           <div class="tags"><span class="chip">Intake 40%</span></div>
         </div>
       </div>
+      </div>
     </section>
 
     <!-- ========== DOCUMENTS ========== -->
@@ -370,6 +429,14 @@
         <div><h1 class="view-title">Document Vault</h1><p class="view-sub">Secure upload and organization. Camera, photo library, files, and PDF supported.</p></div>
         <button class="btn btn-primary">Upload documents</button>
       </div>
+      <div class="fresh-only">
+        <div class="empty-card">
+          <div class="big">No documents yet</div>
+          <p>Upload contracts, correspondence, pleadings, evidence, and photos. The AI links each one to your timeline, evidence map, and issues.</p>
+          <button class="btn btn-primary">Upload your first document</button>
+        </div>
+      </div>
+      <div class="demo-only">
       <div class="panel">
         <div class="tbl-wrap"><table>
           <thead><tr><th>Document</th><th>Type</th><th>Linked to</th><th>Status</th><th>Added</th></tr></thead>
@@ -383,6 +450,7 @@
           </tbody>
         </table></div>
       </div>
+      </div>
     </section>
 
     <!-- ========== TIMELINE ========== -->
@@ -391,6 +459,14 @@
         <div><h1 class="view-title">Timeline</h1><p class="view-sub">Events and evidence, organized chronologically. Fictional sample entries.</p></div>
         <button class="btn btn-ghost">Export chronology</button>
       </div>
+      <div class="fresh-only">
+        <div class="empty-card">
+          <div class="big">Your timeline starts here</div>
+          <p>As you upload documents and the AI processes your story, dated events appear here in order, each linked to its source.</p>
+          <button class="btn btn-primary" onclick="go('documents')">Add documents</button>
+        </div>
+      </div>
+      <div class="demo-only">
       <div class="panel"><div class="panel-body">
         <div class="tl">
           <div class="tl-item">
@@ -419,6 +495,7 @@
           </div>
         </div>
       </div></div>
+      </div>
     </section>
 
     <!-- ========== EVIDENCE ========== -->
@@ -426,6 +503,14 @@
       <div class="view-head">
         <div><h1 class="view-title">Evidence Map</h1><p class="view-sub">Facts, documents, communications, and events, connected to the issues they support.</p></div>
       </div>
+      <div class="fresh-only">
+        <div class="empty-card">
+          <div class="big">Nothing mapped yet</div>
+          <p>Evidence items appear here once documents are uploaded and linked to the facts and issues they support, including gaps worth filling.</p>
+          <button class="btn btn-primary" onclick="go('documents')">Add documents</button>
+        </div>
+      </div>
+      <div class="demo-only">
       <div class="ev-grid">
         <div class="ev-card"><div class="t">Defect photos, March delivery</div><div class="s">12 images, timestamped. Supports nonconformity claim.</div><div class="tags"><span class="chip">Issue 1</span><span class="chip">Event 14</span><span class="chip ok">Strong</span></div></div>
         <div class="ev-card"><div class="t">Vendor email admitting delay</div><div class="s">"We are behind on QA this month." Exact quote needs verification.</div><div class="tags"><span class="chip">Issue 1</span><span class="chip warn">Verify</span></div></div>
@@ -433,6 +518,7 @@
         <div class="ev-card"><div class="t">Contract §7 limitation clause</div><div class="s">Vendor relies on this. Research question open on enforceability.</div><div class="tags"><span class="chip">Issue 3</span><span class="chip ai">Research Q4</span></div></div>
         <div class="ev-card"><div class="t">Text thread, April refusal</div><div class="s">Covers second refusal; conflicting date flagged.</div><div class="tags"><span class="chip">Issue 2</span><span class="chip warn">Date conflict</span></div></div>
         <div class="ev-card"><div class="t">Missing: delivery records</div><div class="s">Gap identified. Carrier records would corroborate refusal dates.</div><div class="tags"><span class="chip warn">Gap</span><span class="chip">Task</span></div></div>
+      </div>
       </div>
     </section>
 
@@ -445,6 +531,21 @@
         <span>!</span>
         <span>AI-generated information may contain errors and is not legal advice. Verify important facts, quotations, authorities, and citations before reliance or filing. High-risk decisions should be escalated to a human professional.</span>
       </div>
+      <div class="fresh-only">
+        <div class="panel"><div class="panel-body">
+          <div class="chat">
+            <div class="msg ai">
+              <div class="msg-meta">Justice Amplified AI <span class="chip ai" style="font-size:9.5px">AI, not a lawyer</span></div>
+              <span id="aiWelcome">Welcome! Your intake is saved. Upload your documents and I'll start structuring parties, events, and potential issues. Nothing I produce is legal advice, and important items will be flagged for your verification.</span>
+            </div>
+          </div>
+          <div class="chat-input">
+            <input type="text" placeholder="Ask about your matter... (preview, input disabled)" disabled>
+            <button class="btn btn-primary">Send</button>
+          </div>
+        </div></div>
+      </div>
+      <div class="demo-only">
       <div class="panel"><div class="panel-body">
         <div class="chat">
           <div class="msg user"><div class="msg-meta">You</div>Summarize where my case file stands and what I should do next.</div>
@@ -465,6 +566,7 @@
           <button class="btn btn-primary">Send</button>
         </div>
       </div></div>
+      </div>
     </section>
 
     <!-- ========== DRAFTS ========== -->
@@ -473,12 +575,20 @@
         <div><h1 class="view-title">Drafts</h1><p class="view-sub">Working drafts generated from verified matter information. Always review before use.</p></div>
         <button class="btn btn-primary">New draft</button>
       </div>
+      <div class="fresh-only">
+        <div class="empty-card">
+          <div class="big">No drafts yet</div>
+          <p>Working drafts and your attorney-ready case summary are generated from verified matter information. They start appearing after your first documents are processed.</p>
+        </div>
+      </div>
+      <div class="demo-only">
       <div class="panel"><div class="panel-body list">
         <div class="row"><div class="doc-ic">DOC</div><div class="grow"><div class="t">Demand letter draft v2</div><div class="s">Updated Oct 14 · built from chronology and issues 1 to 3</div></div><span class="chip ai">AI-assisted</span><span class="chip warn">Verify before sending</span></div>
         <div class="row"><div class="doc-ic">DOC</div><div class="grow"><div class="t">Carrier records request v1</div><div class="s">Created today · evidence gap follow-up</div></div><span class="chip ai">AI-assisted</span></div>
         <div class="row"><div class="doc-ic">SUM</div><div class="grow"><div class="t">Attorney-ready case summary</div><div class="s">Auto-maintained · 70% complete, blocked on 3 verification items</div></div><span class="chip">In progress</span></div>
         <div class="row"><div class="doc-ic">CHR</div><div class="grow"><div class="t">Chronology export</div><div class="s">57 events · regenerates when timeline changes</div></div><span class="chip ok">Current</span></div>
       </div></div>
+      </div>
     </section>
 
     <!-- ========== RESEARCH ========== -->
@@ -486,6 +596,13 @@
       <div class="view-head">
         <div><h1 class="view-title">Research</h1><p class="view-sub">Questions worth investigating, with neutral background material. Legal conclusions belong to licensed attorneys.</p></div>
       </div>
+      <div class="fresh-only">
+        <div class="empty-card">
+          <div class="big">No research questions yet</div>
+          <p>As the AI structures your matter, it surfaces questions worth investigating. Legal questions get flagged for attorney review instead of guessed at.</p>
+        </div>
+      </div>
+      <div class="demo-only">
       <div class="panel"><div class="panel-body list">
         <div class="row"><div class="grow"><div class="t">Q1 · What counts as "nonconforming goods" under the contract's own definitions?</div><div class="s">Background gathered from the contract text</div></div><span class="chip ok">Reviewed</span></div>
         <div class="row"><div class="grow"><div class="t">Q2 · What notice does §9 require before claiming a refund?</div><div class="s">Deadline implications flagged to Tasks</div></div><span class="chip ok">Reviewed</span></div>
@@ -494,6 +611,7 @@
         <div class="row"><div class="grow"><div class="t">Q5 · Small-claims vs civil filing thresholds in your jurisdiction</div><div class="s">Jurisdiction-dependent, informational only</div></div><span class="chip">Open</span></div>
         <div class="row"><div class="grow"><div class="t">Q6 · Mediation or demand first?</div><div class="s">Strategy question, flagged for professional judgment</div></div><span class="chip gold">For attorney</span></div>
       </div></div>
+      </div>
     </section>
 
     <!-- ========== ATTORNEY REVIEW ========== -->
@@ -501,11 +619,21 @@
       <div class="view-head">
         <div><h1 class="view-title">Attorney Review</h1><p class="view-sub">Bring an independent licensed attorney into your matter, where available.</p></div>
       </div>
+      <div class="fresh-only" style="margin-bottom:16px">
+        <div class="panel">
+          <div class="panel-head"><span class="panel-title">Your handoff packet</span><span class="chip">Not started</span></div>
+          <div class="panel-body">
+            <p style="font-size:13.5px; color:var(--muted); max-width:70ch">Your attorney-ready packet builds itself as you add documents and verify what the AI organizes. The better prepared you arrive, the more every attorney hour counts.</p>
+          </div>
+        </div>
+      </div>
+      <div class="demo-only">
       <div class="panel" style="margin-bottom:16px">
         <div class="panel-head"><span class="panel-title">Your handoff packet</span><span class="chip warn">70% ready</span></div>
         <div class="panel-body">
           <p style="font-size:13.5px; color:var(--muted); max-width:70ch">Your attorney-ready case file currently includes an executive summary, a 57-event chronology, 24 linked documents, an evidence map, 6 issues, and 6 research questions. Finish the 3 verification items to complete it; organized clients make attorney time count.</p>
         </div>
+      </div>
       </div>
       <div class="tier-grid">
         <div class="tier"><h4>Document Review</h4><div class="p">from $1,000</div><div class="d">A licensed set of eyes on your packet, key documents, and drafts.</div><button class="btn btn-primary">Request review</button></div>
@@ -521,11 +649,18 @@
       <div class="view-head">
         <div><h1 class="view-title">Messages</h1><p class="view-sub">You always know whether you're talking to AI or a human.</p></div>
       </div>
+      <div class="fresh-only">
+        <div class="panel"><div class="panel-body list">
+          <div class="row"><div class="avatar" style="background:var(--bg2); border:1px solid rgba(0,168,255,0.4); color:var(--cyan)">AI</div><div class="grow"><div class="t">Welcome to your workspace</div><div class="s">Justice Amplified AI · your intake is saved and ready to build on</div></div><span class="chip ai">AI</span></div>
+        </div></div>
+      </div>
+      <div class="demo-only">
       <div class="panel"><div class="panel-body list">
         <div class="row"><div class="avatar" style="background:var(--bg2); border:1px solid rgba(0,168,255,0.4); color:var(--cyan)">AI</div><div class="grow"><div class="t">Verification reminder: 3 items are waiting on you</div><div class="s">Justice Amplified AI · today</div></div><span class="chip ai">AI</span></div>
         <div class="row"><div class="avatar" style="background:var(--bg2); border:1px solid var(--line-strong); color:var(--muted)">JS</div><div class="grow"><div class="t">Welcome! Here's how guided support works</div><div class="s">Jordan, Justice Amplified support (human) · Oct 20</div></div><span class="chip ok">Human</span></div>
         <div class="row"><div class="avatar" style="background:var(--bg2); border:1px solid rgba(201,164,92,0.4); color:var(--gold)">AT</div><div class="grow"><div class="t">No attorney engaged on this matter yet</div><div class="s">Attorney messages will appear here after an engagement begins</div></div><span class="chip gold">Attorney</span></div>
       </div></div>
+      </div>
     </section>
 
     <!-- ========== TASKS ========== -->
@@ -534,6 +669,14 @@
         <div><h1 class="view-title">Tasks &amp; Deadlines</h1><p class="view-sub">Nothing slips. Dates you enter, plus dates the AI spots for your verification.</p></div>
         <button class="btn btn-primary">+ Add task</button>
       </div>
+      <div class="fresh-only">
+        <div class="panel"><div class="panel-body">
+          <label class="task"><input type="checkbox" onchange="this.closest('.task').classList.toggle('done', this.checked)"><div><div class="t">Upload your first documents</div><div class="s">Everything else builds from these</div></div></label>
+          <label class="task"><input type="checkbox" onchange="this.closest('.task').classList.toggle('done', this.checked)"><div><div class="t">Review your AI-structured intake summary</div><div class="s">Confirm the parties and story were captured correctly</div></div></label>
+          <label class="task"><input type="checkbox" onchange="this.closest('.task').classList.toggle('done', this.checked)"><div><div class="t">Note any dates or deadlines you know about</div><div class="s">From your intake: deadline review queued</div></div></label>
+        </div></div>
+      </div>
+      <div class="demo-only">
       <div class="panel"><div class="panel-body">
         <label class="task"><input type="checkbox" onchange="this.closest('.task').classList.toggle('done', this.checked)"><div><div class="t">Resolve the April date conflict (Apr 2 vs Apr 4)</div><div class="s">Due Nov 01 · blocks the handoff packet</div></div></label>
         <label class="task"><input type="checkbox" onchange="this.closest('.task').classList.toggle('done', this.checked)"><div><div class="t">Send response letter</div><div class="s">Due Nov 04 · draft v2 ready for your review</div></div></label>
@@ -541,6 +684,7 @@
         <label class="task"><input type="checkbox" onchange="this.closest('.task').classList.toggle('done', this.checked)"><div><div class="t">Request carrier delivery records</div><div class="s">Due Nov 15 · draft letter ready</div></div></label>
         <label class="task done"><input type="checkbox" checked onchange="this.closest('.task').classList.toggle('done', this.checked)"><div><div class="t">Label March delivery photos</div><div class="s">Completed Oct 24</div></div></label>
       </div></div>
+      </div>
     </section>
 
   </main>
@@ -577,6 +721,31 @@
     try { localStorage.setItem('ja-portal-ack', '1'); } catch (e) {}
   }
   try { if (localStorage.getItem('ja-portal-ack') === '1') gate.classList.add('hidden'); } catch (e) {}
+
+  // Fresh-account mode: activated when the intake wizard created a workspace
+  function esc(s) { var d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
+  var intake = null;
+  try { intake = JSON.parse(localStorage.getItem('ja-intake') || 'null'); } catch (e) {}
+  var wantDemo = /[?&]demo=1/.test(location.search);
+  var modeLink = document.getElementById('modeLink');
+  if (intake && !wantDemo) {
+    document.body.classList.add('fresh');
+    var name = intake.name || 'You';
+    var first = name.split(' ')[0];
+    var initials = name.split(' ').map(function (p) { return (p[0] || ''); }).join('').slice(0, 2).toUpperCase() || 'YO';
+    document.getElementById('userName').textContent = name;
+    document.getElementById('userAv').textContent = initials;
+    document.getElementById('matterSel').innerHTML = '<option>Matter: ' + esc(intake.matter) + '</option>';
+    document.getElementById('dashTitle').textContent = 'Welcome, ' + first + '.';
+    document.getElementById('dashSub').textContent = (intake.matter || 'Your matter') + ' · ' + (intake.state || '') + ' · workspace created ' + (intake.created || '');
+    var mt = document.getElementById('freshMatterTitle'); if (mt) mt.textContent = intake.matter || 'Your matter';
+    var ms = document.getElementById('freshMatterSub'); if (ms) ms.textContent = (intake.who || 'Individual') + ' matter · ' + (intake.state || '') + ' · created ' + (intake.created || '');
+    var aw = document.getElementById('aiWelcome');
+    if (aw) aw.innerHTML = 'Welcome, ' + esc(first) + '! I\'ve saved your intake for your <b>' + esc((intake.matter || 'matter').toLowerCase()) + '</b>' + (intake.state ? ' in ' + esc(intake.state) : '') + '. Upload your documents and I\'ll start structuring parties, events, and potential issues. Nothing I produce is legal advice, and important items will be flagged for your verification.';
+    modeLink.hidden = false; modeLink.textContent = 'View sample data'; modeLink.href = '?demo=1';
+  } else if (intake && wantDemo) {
+    modeLink.hidden = false; modeLink.textContent = 'Back to my workspace'; modeLink.href = './';
+  }
 </script>
 </body>
 </html>

@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Start Your Case · Justice Amplified</title>
+<meta name="description" content="Guided intake: tell us what happened, upload documents, and create your secure matter workspace.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg0: #02050B; --bg1: #061329; --bg2: #081C38;
+    --ink: #F2F6FF; --muted: #93A6C7; --dim: #5F7398;
+    --blue: #087CFF; --cyan: #00A8FF; --gold: #C9A45C;
+    --good: #2BD9A0; --warn: #FFB454;
+    --line: rgba(130,170,255,0.14); --line-strong: rgba(130,170,255,0.28);
+    --glow: rgba(8,124,255,0.22);
+    --display: 'Big Shoulders Display', 'Arial Narrow', sans-serif;
+    --body: 'Public Sans', -apple-system, 'Segoe UI', sans-serif;
+    --mono: 'IBM Plex Mono', 'SF Mono', Menlo, monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { overflow-x: clip; }
+  body {
+    background: var(--bg0); color: var(--ink);
+    font-family: var(--body); font-weight: 300; line-height: 1.55; font-size: 15px;
+    -webkit-font-smoothing: antialiased; min-height: 100vh;
+    background-image: radial-gradient(ellipse 800px 480px at 80% -10%, rgba(8,124,255,0.18), transparent 65%);
+  }
+  a { color: inherit; text-decoration: none; }
+  button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+  ::selection { background: var(--blue); color: #fff; }
+
+  .top { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 16px 20px; border-bottom: 1px solid var(--line); }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .brand svg { width: 24px; height: 24px; }
+  .brand-word { font-family: var(--display); font-weight: 700; font-size: 17px; letter-spacing: 0.06em; text-transform: uppercase; }
+  .brand-word span { color: var(--cyan); }
+  .top-exit { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dim); }
+  .top-exit:hover { color: var(--cyan); }
+
+  .wiz { max-width: 680px; margin: 0 auto; padding: 36px 20px 80px; }
+  .progress { display: flex; align-items: center; gap: 10px; margin-bottom: 30px; }
+  .progress .bar { flex: 1; height: 4px; border-radius: 2px; background: rgba(130,170,255,0.15); overflow: hidden; }
+  .progress .bar i { display: block; height: 100%; border-radius: 2px; background: linear-gradient(90deg, var(--blue), var(--cyan)); width: 0; transition: width 0.3s ease; }
+  .progress .n { font-family: var(--mono); font-size: 11.5px; color: var(--dim); letter-spacing: 0.08em; white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+  .step { display: none; }
+  .step.active { display: block; animation: fadeUp 0.3s ease both; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .step.active { animation: none; } }
+
+  .kicker { font-family: var(--mono); font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--cyan); margin-bottom: 12px; }
+  h1 { font-family: var(--display); font-weight: 700; text-transform: uppercase; font-size: clamp(30px, 5.5vw, 44px); line-height: 0.98; letter-spacing: 0.02em; text-wrap: balance; }
+  .sub { margin-top: 12px; color: var(--muted); font-size: 14.5px; max-width: 56ch; }
+  .sub b { color: var(--ink); font-weight: 600; }
+
+  .opts { margin-top: 26px; display: grid; gap: 10px; }
+  .opts.two { grid-template-columns: 1fr; }
+  @media (min-width: 560px) { .opts.two { grid-template-columns: 1fr 1fr; } }
+  .opt {
+    text-align: left; border: 1px solid var(--line); border-radius: 10px; background: var(--bg1);
+    padding: 16px 18px; transition: border-color 0.15s ease, background 0.15s ease; width: 100%;
+  }
+  .opt:hover { border-color: var(--line-strong); }
+  .opt.sel { border-color: var(--cyan); background: rgba(8,124,255,0.1); }
+  .opt .t { font-size: 14.5px; color: var(--ink); font-weight: 500; }
+  .opt .s { margin-top: 3px; font-size: 12.5px; color: var(--dim); }
+
+  .field { margin-top: 22px; }
+  .field label { display: block; font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim); margin-bottom: 8px; }
+  .field input, .field select, .field textarea {
+    width: 100%; background: var(--bg1); border: 1px solid var(--line-strong); border-radius: 8px;
+    padding: 13px 15px; color: var(--ink); font: inherit; font-size: 14.5px;
+  }
+  .field textarea { min-height: 150px; resize: vertical; line-height: 1.6; }
+  .field input::placeholder, .field textarea::placeholder { color: var(--dim); }
+  .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--cyan); }
+  .hint { margin-top: 8px; font-size: 12px; color: var(--dim); }
+
+  .drop {
+    margin-top: 26px; border: 1px dashed var(--line-strong); border-radius: 12px; padding: 36px 20px;
+    text-align: center; color: var(--dim); font-size: 13.5px; background: rgba(8,28,56,0.3);
+  }
+  .drop .big { font-family: var(--display); font-weight: 700; text-transform: uppercase; font-size: 19px; color: var(--muted); letter-spacing: 0.04em; }
+  .drop .chips { margin-top: 14px; display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+  .chip { font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; border: 1px solid var(--line); border-radius: 100px; padding: 4px 11px; color: var(--muted); background: rgba(8,28,56,0.4); }
+
+  .ack { margin-top: 14px; display: flex; gap: 10px; align-items: flex-start; font-size: 13.5px; color: var(--muted); cursor: pointer; border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; background: var(--bg1); }
+  .ack input { margin-top: 3px; width: 15px; height: 15px; accent-color: var(--blue); flex: none; }
+  .ack b { color: var(--ink); font-weight: 600; }
+
+  .nav-row { margin-top: 30px; display: flex; gap: 12px; align-items: center; }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    font-family: var(--mono); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 14px 24px; border-radius: 7px; border: 1px solid transparent; white-space: nowrap;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+  }
+  .btn-primary { background: linear-gradient(100deg, var(--blue), var(--cyan)); color: #fff; box-shadow: 0 10px 28px -10px var(--glow); }
+  .btn-primary:hover { transform: translateY(-1px); }
+  .btn-primary.off { opacity: 0.4; pointer-events: none; }
+  .btn-ghost { border-color: var(--line-strong); color: var(--muted); }
+  .btn-ghost:hover { border-color: var(--cyan); color: var(--cyan); }
+  .skip { margin-left: auto; font-family: var(--mono); font-size: 11.5px; color: var(--dim); letter-spacing: 0.08em; }
+  .skip:hover { color: var(--cyan); }
+
+  .preview-note { margin-top: 36px; font-family: var(--mono); font-size: 11px; color: var(--dim); line-height: 1.8; border-top: 1px solid var(--line); padding-top: 16px; }
+
+  /* Done screen */
+  .done-card { margin-top: 26px; border: 1px solid rgba(0,168,255,0.35); border-radius: 14px; background: linear-gradient(180deg, rgba(8,124,255,0.1), var(--bg1)); padding: 28px; }
+  .done-card .m { font-family: var(--display); font-weight: 700; text-transform: uppercase; font-size: 24px; letter-spacing: 0.02em; }
+  .done-card .list { margin-top: 14px; display: grid; gap: 8px; font-size: 13.5px; color: var(--muted); }
+  .done-card .list div::before { content: "\2713  "; color: var(--good); font-family: var(--mono); }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <a class="brand" href="../">
+    <svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
+      <path d="M16 3v22" stroke="#087CFF" stroke-width="2"/><path d="M6 8h20" stroke="#087CFF" stroke-width="2"/>
+      <path d="M6 8l-3.5 8a4.5 4.5 0 0 0 9 0L8 8" stroke="#00A8FF" stroke-width="1.6" fill="none"/>
+      <path d="M26 8l-3.5 8a4.5 4.5 0 0 0 9 0L28 8" stroke="#00A8FF" stroke-width="1.6" fill="none"/>
+      <path d="M11 28h10" stroke="#C9A45C" stroke-width="2"/>
+    </svg>
+    <span class="brand-word">Justice<span>Amplified</span></span>
+  </a>
+  <a class="top-exit" href="../">Save &amp; exit</a>
+</header>
+
+<div class="wiz">
+  <div class="progress"><div class="bar"><i id="pbar"></i></div><span class="n" id="pnum">Step 1 of 10</span></div>
+
+  <!-- STEP 0: Disclosures -->
+  <section class="step active" data-step="0">
+    <div class="kicker">Before we begin</div>
+    <h1>A few things you should know.</h1>
+    <p class="sub">Justice Amplified provides technology and legal-information tools. Acknowledge each item to continue.</p>
+    <label class="ack"><input type="checkbox" class="ck0"> <span>I understand this is <b>AI-powered self-help technology</b>, not a lawyer, and using it does not create an attorney-client relationship.</span></label>
+    <label class="ack"><input type="checkbox" class="ck0"> <span>I understand <b>AI-generated information may contain errors</b> and should be independently verified before reliance or filing.</span></label>
+    <label class="ack"><input type="checkbox" class="ck0"> <span>I understand attorney services, where available, are provided by <b>independent licensed attorneys</b> under separate engagement terms, and availability varies by jurisdiction.</span></label>
+    <div class="nav-row"><button class="btn btn-primary off" id="ackNext" onclick="next()">I understand, continue</button></div>
+  </section>
+
+  <!-- STEP 1: Issue type -->
+  <section class="step" data-step="1">
+    <div class="kicker">Step 1 · Your situation</div>
+    <h1>What type of legal issue are you dealing with?</h1>
+    <div class="opts two" data-key="issue">
+      <button class="opt" data-v="Contract or business dispute"><div class="t">Contract or business dispute</div><div class="s">Vendors, customers, partners, agreements</div></button>
+      <button class="opt" data-v="Landlord / tenant"><div class="t">Landlord / tenant</div><div class="s">Leases, deposits, repairs, eviction</div></button>
+      <button class="opt" data-v="Employment"><div class="t">Employment</div><div class="s">Wages, termination, workplace issues</div></button>
+      <button class="opt" data-v="Debt or collections"><div class="t">Debt or collections</div><div class="s">Money owed to you or claimed from you</div></button>
+      <button class="opt" data-v="Civil lawsuit"><div class="t">Civil lawsuit</div><div class="s">You are suing or being sued</div></button>
+      <button class="opt" data-v="Something else"><div class="t">Something else</div><div class="s">We'll help you organize it either way</div></button>
+    </div>
+    <div class="nav-row"><button class="btn btn-ghost" onclick="back()">Back</button><button class="btn btn-primary off" data-need="issue" onclick="next()">Continue</button></div>
+  </section>
+
+  <!-- STEP 2: Location -->
+  <section class="step" data-step="2">
+    <div class="kicker">Step 2 · Location</div>
+    <h1>Where are you located?</h1>
+    <p class="sub">Feature and service availability varies by jurisdiction.</p>
+    <div class="field">
+      <label for="state">State / territory</label>
+      <select id="state">
+        <option value="">Select your state...</option>
+        <option>Arizona</option><option>California</option><option>Colorado</option><option>Florida</option>
+        <option>Georgia</option><option>Illinois</option><option>Maine</option><option>Massachusetts</option>
+        <option>Nevada</option><option>New Jersey</option><option>New York</option><option>North Carolina</option>
+        <option>Ohio</option><option>Pennsylvania</option><option>Texas</option><option>Virginia</option>
+        <option>Washington</option><option>Other US state or territory</option>
+      </select>
+    </div>
+    <div class="nav-row"><button class="btn btn-ghost" onclick="back()">Back</button><button class="btn btn-primary off" data-need="state" onclick="next()">Continue</button></div>
+  </section>
+
+  <!-- STEP 3: Individual or business -->
+  <section class="step" data-step="3">
+    <div class="kicker">Step 3 · Who this is for</div>
+    <h1>Are you an individual or a business?</h1>
+    <div class="opts two" data-key="who">
+      <button class="opt" data-v="Individual"><div class="t">Individual</div><div class="s">This matter is personal</div></button>
+      <button class="opt" data-v="Business"><div class="t">Business</div><div class="s">This matter involves my company</div></button>
+    </div>
+    <div class="nav-row"><button class="btn btn-ghost" onclick="back()">Back</button><button class="btn btn-primary off" data-need="who" onclick="next()">Continue</button></div>
+  </section>
+
+  <!-- STEP 4: Represented -->
+  <section class="step" data-step="4">
+    <div class="kicker">Step 4 · Representation</div>
+    <h1>Are you currently represented by an attorney?</h1>
+    <p class="sub">If you are, Justice Amplified helps you arrive organized and make their time count.</p>
+    <div class="opts two" data-key="represented">
+      <button class="opt" data-v="No"><div class="t">No</div><div class="s">I'm handling this myself for now</div></button>
+      <button class="opt" data-v="Yes"><div class="t">Yes</div><div class="s">I have an attorney on this matter</div></button>
+    </div>
+    <div class="nav-row"><button class="btn btn-ghost" onclick="back()">Back</button><button class="btn btn-primary off" data-need="represented" onclick="next()">Continue</button></div>
+  </section>
+
+  <!-- STEP 5: Lawsuit filed -->
+  <section class="step" data-step="5">
+    <div class="kicker">Step 5 · Court status</div>
+    <h1>Has a lawsuit already been filed?</h1>
+    <div class="opts two" data-key="lawsuit">
+      <button class="opt" data-v="No"><div class="t">No</div><div class="s">Nothing filed yet</div></button>
+      <button class="opt" data-v="Yes"><div class="t">Yes</div><div class="s">A case is already in court</div></button>
+      <button class="opt" data-v="Not sure"><div class="t">Not sure</div><div class="s">We'll help you find out</div></button>
+    </div>
+    <div class="nav-row"><button class="btn btn-ghost" onclick="back()">Back</button><button class="btn btn-primary off" data-need="lawsuit" onclick="next()">Continue</button></div>
+  </section>
+
+  <!-- STEP 6: Deadlines -->
+  <section class="step" data-step="6">
+    <div class="kicker">Step 6 · Timing</div>
+    <h1>Are there upcoming deadlines?</h1>
+    <p class="sub">Court dates, response windows, notice periods, anything with a date attached.</p>
+    <div class="opts two" data-key="deadlines">
+      <button class="opt" data-v="Yes"><div class="t">Yes</div><div class="s">Something is coming up</div></button>
+      <button class="opt" data-v="No"><div class="t">No</div><div class="s">Nothing dated that I know of</div></button>
+      <button class="opt" data-v="Not sure"><div class="t">Not sure</div><div class="s">Flag it for review</div></button>
+    </div>
+    <div class="nav-row"><button class="btn btn-ghost" onclick="back()">Back</button><button class="btn btn-primary off" data-need="deadlines" onclick="next()">Continue</button></div>
+  </section>
+
+  <!-- STEP 7: Upload -->
+  <section class="step" data-step="7">
+    <div class="kicker">Step 7 · Documents</div>
+    <h1>Upload relevant documents.</h1>
+    <p class="sub">Contracts, correspondence, pleadings, evidence, photos. You can always add more later.</p>
+    <div class="drop">
+      <div class="big">Drop files here</div>
+      <div style="margin-top:6px">or tap to browse (disabled in this preview)</div>
+      <div class="chips"><span class="chip">Camera</span><span class="chip">Photo library</span><span class="chip">Files</span><span class="chip">PDF</span></div>
+    </div>
+    <div class="nav-row"><button class="btn btn-ghost" onclick="back()">Back</button><button class="btn btn-primary" onclick="next()">Continue</button><button class="skip" onclick="next()">Skip for now</button></div>
+  </section>
+
+  <!-- STEP 8: Narrative -->
+  <section class="step" data-step="8">
+    <div class="kicker">Step 8 · Your story</div>
+    <h1>Tell us what happened.</h1>
+    <p class="sub">Plain language is perfect. The AI will help structure parties, events, and issues from what you write.</p>
+    <div class="field">
+      <label for="story">What happened, in your own words</label>
+      <textarea id="story" placeholder="Start anywhere. Who is involved, what went wrong, what you want to happen..."></textarea>
+      <div class="hint">Preview note: nothing you type here is sent anywhere. It stays in your browser only.</div>
+    </div>
+    <div class="nav-row"><button class="btn btn-ghost" onclick="back()">Back</button><button class="btn btn-primary off" data-need="story" onclick="next()">Continue</button></div>
+  </section>
+
+  <!-- STEP 9: Account -->
+  <section class="step" data-step="9">
+    <div class="kicker">Step 9 · Your account</div>
+    <h1>Create your account.</h1>
+    <p class="sub">Your matter workspace is private to you.</p>
+    <div class="field"><label for="accName">Name</label><input id="accName" type="text" placeholder="Your name" autocomplete="off"></div>
+    <div class="field"><label for="accEmail">Email</label><input id="accEmail" type="text" placeholder="you@example.com" autocomplete="off"></div>
+    <div class="hint" style="margin-top:14px">This is a preview: no account is actually created and nothing is transmitted. Your entries stay in this browser so you can see your workspace take shape.</div>
+    <div class="nav-row"><button class="btn btn-ghost" onclick="back()">Back</button><button class="btn btn-primary off" data-need="acc" onclick="finish()">Create my matter workspace</button></div>
+  </section>
+
+  <!-- STEP 10: Done -->
+  <section class="step" data-step="10">
+    <div class="kicker">Workspace created</div>
+    <h1>Your case has a home now.</h1>
+    <div class="done-card">
+      <div class="m" id="doneMatter">Your matter</div>
+      <div class="list">
+        <div>Secure matter workspace created</div>
+        <div>Intake answers saved to your case memory</div>
+        <div>AI organization queued: parties, events, issues</div>
+        <div id="doneDeadline">Deadline review flagged</div>
+      </div>
+    </div>
+    <div class="nav-row">
+      <a class="btn btn-primary" href="../portal/">Open my workspace</a>
+      <a class="btn btn-ghost" href="../">Back to site</a>
+    </div>
+  </section>
+
+  <p class="preview-note">Technology and legal-information tools, not legal advice and not a law firm. AI-generated material should be independently verified. Attorney services, where offered, come from independent licensed attorneys under separate engagement terms.</p>
+</div>
+
+<script>
+  var answers = {};
+  var cur = 0;
+  var TOTAL = 10;
+  var steps = document.querySelectorAll('.step');
+
+  function show(n) {
+    cur = n;
+    steps.forEach(function (s) { s.classList.toggle('active', +s.getAttribute('data-step') === n); });
+    var pct = Math.min(100, Math.round((n / TOTAL) * 100));
+    document.getElementById('pbar').style.width = pct + '%';
+    document.getElementById('pnum').textContent = n >= TOTAL ? 'Done' : 'Step ' + (n + 1) + ' of ' + TOTAL;
+    window.scrollTo(0, 0);
+  }
+  function next() { if (cur < TOTAL) show(cur + 1); }
+  function back() { if (cur > 0) show(cur - 1); }
+
+  // Option cards
+  document.querySelectorAll('.opts').forEach(function (grp) {
+    var key = grp.getAttribute('data-key');
+    grp.querySelectorAll('.opt').forEach(function (o) {
+      o.addEventListener('click', function () {
+        grp.querySelectorAll('.opt').forEach(function (x) { x.classList.remove('sel'); });
+        o.classList.add('sel');
+        answers[key] = o.getAttribute('data-v');
+        var btn = grp.closest('.step').querySelector('[data-need="' + key + '"]');
+        if (btn) btn.classList.remove('off');
+      });
+    });
+  });
+
+  // Disclosure checks
+  var cks = document.querySelectorAll('.ck0');
+  cks.forEach(function (c) {
+    c.addEventListener('change', function () {
+      var all = Array.prototype.every.call(cks, function (x) { return x.checked; });
+      document.getElementById('ackNext').classList.toggle('off', !all);
+    });
+  });
+
+  // Field-gated steps
+  document.getElementById('state').addEventListener('change', function () {
+    answers.state = this.value;
+    document.querySelector('[data-need="state"]').classList.toggle('off', !this.value);
+  });
+  document.getElementById('story').addEventListener('input', function () {
+    answers.story = this.value;
+    document.querySelector('[data-need="story"]').classList.toggle('off', this.value.trim().length < 10);
+  });
+  function accCheck() {
+    var n = document.getElementById('accName').value.trim();
+    var e = document.getElementById('accEmail').value.trim();
+    document.querySelector('[data-need="acc"]').classList.toggle('off', !(n && e.indexOf('@') > 0));
+  }
+  document.getElementById('accName').addEventListener('input', accCheck);
+  document.getElementById('accEmail').addEventListener('input', accCheck);
+
+  function finish() {
+    answers.name = document.getElementById('accName').value.trim();
+    answers.email = document.getElementById('accEmail').value.trim();
+    answers.matter = answers.issue || 'New matter';
+    answers.created = new Date().toISOString().slice(0, 10);
+    try { localStorage.setItem('ja-intake', JSON.stringify(answers)); localStorage.setItem('ja-portal-ack', '1'); } catch (e) {}
+    document.getElementById('doneMatter').textContent = answers.matter + ' · ' + (answers.state || '');
+    document.getElementById('doneDeadline').textContent = answers.deadlines === 'Yes' ? 'Deadline review flagged as urgent' : 'Deadline review queued';
+    show(TOTAL);
+  }
+</script>
+</body>
+</html>
